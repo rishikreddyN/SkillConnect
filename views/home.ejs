@@ -1,103 +1,907 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <title>SkillConnect</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>SkillConnect</title>
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;700;800&family=DM+Mono:wght@400;500&family=DM+Sans:ital,wght@0,300;0,400;1,300&display=swap" rel="stylesheet"/>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
-    <style>
+    :root {
+      --bg: #0a0a0f;
+      --surface: #12121a;
+      --border: rgba(255,255,255,0.07);
+      --accent: #00e5a0;
+      --accent2: #7b61ff;
+      --text: #f0f0f8;
+      --muted: #6b6b80;
+      --card: #16161f;
+    }
 
-        body{
-            margin:0;
-            font-family:Arial, Helvetica, sans-serif;
-            background:#f5f5f5;
-        }
+    html { scroll-behavior: smooth; }
 
-        .navbar{
-            display:flex;
-            justify-content:space-between;
-            align-items:center;
-            padding:18px 40px;
-            background:#111;
-            color:white;
-        }
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'DM Sans', sans-serif;
+      font-weight: 300;
+      overflow-x: hidden;
+      cursor: none;
+    }
 
-        .nav-links a{
-            color:white;
-            text-decoration:none;
-            margin-left:20px;
-            font-weight:bold;
-        }
+    /* Custom cursor */
+    .cursor {
+      width: 10px; height: 10px;
+      background: var(--accent);
+      border-radius: 50%;
+      position: fixed;
+      top: 0; left: 0;
+      pointer-events: none;
+      z-index: 9999;
+      transform: translate(-50%, -50%);
+      transition: transform 0.1s ease, width 0.3s ease, height 0.3s ease, background 0.3s ease;
+      mix-blend-mode: screen;
+    }
+    .cursor-ring {
+      width: 36px; height: 36px;
+      border: 1px solid rgba(0, 229, 160, 0.4);
+      border-radius: 50%;
+      position: fixed;
+      top: 0; left: 0;
+      pointer-events: none;
+      z-index: 9998;
+      transform: translate(-50%, -50%);
+      transition: transform 0.18s ease, width 0.3s ease, height 0.3s ease, border-color 0.3s ease;
+    }
 
-        .hero{
-            height:80vh;
-            display:flex;
-            flex-direction:column;
-            justify-content:center;
-            align-items:center;
-            text-align:center;
-            padding:20px;
-        }
+    /* Background grid */
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background-image:
+        linear-gradient(rgba(255,255,255,0.025) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255,255,255,0.025) 1px, transparent 1px);
+      background-size: 60px 60px;
+      pointer-events: none;
+      z-index: 0;
+    }
 
-        .hero h1{
-            font-size:48px;
-            margin-bottom:10px;
-        }
+    /* Glow blobs */
+    .blob {
+      position: fixed;
+      border-radius: 50%;
+      filter: blur(120px);
+      pointer-events: none;
+      z-index: 0;
+      opacity: 0.18;
+    }
+    .blob-1 {
+      width: 600px; height: 600px;
+      background: var(--accent2);
+      top: -200px; right: -100px;
+      animation: blobFloat1 12s ease-in-out infinite;
+    }
+    .blob-2 {
+      width: 500px; height: 500px;
+      background: var(--accent);
+      bottom: -150px; left: -100px;
+      animation: blobFloat2 15s ease-in-out infinite;
+    }
+    @keyframes blobFloat1 {
+      0%, 100% { transform: translate(0,0) scale(1); }
+      50% { transform: translate(-40px, 60px) scale(1.1); }
+    }
+    @keyframes blobFloat2 {
+      0%, 100% { transform: translate(0,0) scale(1); }
+      50% { transform: translate(50px, -40px) scale(1.08); }
+    }
 
-        .hero p{
-            max-width:600px;
-            font-size:18px;
-            color:#555;
-        }
+    /* Navbar */
+    nav {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      z-index: 100;
+      padding: 20px 48px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-bottom: 1px solid var(--border);
+      background: rgba(10,10,15,0.7);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+    }
 
-        .btn{
-            margin-top:25px;
-            padding:12px 25px;
-            font-size:16px;
-            border:none;
-            background:#0077ff;
-            color:white;
-            cursor:pointer;
-            border-radius:5px;
-        }
+    .logo {
+      font-family: 'Syne', sans-serif;
+      font-weight: 800;
+      font-size: 22px;
+      letter-spacing: -0.5px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .logo-dot {
+      width: 8px; height: 8px;
+      background: var(--accent);
+      border-radius: 50%;
+      display: inline-block;
+      animation: pulse 2s ease-in-out infinite;
+    }
+    @keyframes pulse {
+      0%, 100% { box-shadow: 0 0 0 0 rgba(0,229,160,0.5); }
+      50% { box-shadow: 0 0 0 6px rgba(0,229,160,0); }
+    }
 
-        .btn:hover{
-            background:#005ed6;
-        }
+    .nav-right {
+      display: flex;
+      align-items: center;
+      gap: 32px;
+    }
+    .nav-link {
+      color: var(--muted);
+      text-decoration: none;
+      font-size: 14px;
+      font-weight: 400;
+      letter-spacing: 0.02em;
+      transition: color 0.2s;
+    }
+    .nav-link:hover { color: var(--text); }
 
-    </style>
+    .nav-cta {
+      padding: 9px 20px;
+      background: transparent;
+      border: 1px solid var(--accent);
+      color: var(--accent);
+      border-radius: 4px;
+      font-size: 14px;
+      font-family: 'DM Mono', monospace;
+      font-weight: 500;
+      letter-spacing: 0.03em;
+      text-decoration: none;
+      transition: background 0.25s, color 0.25s, box-shadow 0.25s;
+    }
+    .nav-cta:hover {
+      background: var(--accent);
+      color: #000;
+      box-shadow: 0 0 24px rgba(0,229,160,0.3);
+    }
+
+    /* Hero */
+    .hero {
+      position: relative;
+      z-index: 1;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      padding: 0 48px;
+      padding-top: 120px;
+    }
+
+    .hero-label {
+      font-family: 'DM Mono', monospace;
+      font-size: 12px;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 28px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      opacity: 0;
+      animation: fadeUp 0.8s ease 0.2s forwards;
+    }
+    .hero-label::before {
+      content: '';
+      width: 32px; height: 1px;
+      background: var(--accent);
+    }
+
+    .hero-title {
+      font-family: 'Syne', sans-serif;
+      font-weight: 800;
+      font-size: clamp(52px, 8vw, 100px);
+      line-height: 0.95;
+      letter-spacing: -0.03em;
+      max-width: 900px;
+      margin-bottom: 36px;
+      opacity: 0;
+      animation: fadeUp 0.9s ease 0.35s forwards;
+    }
+    .hero-title em {
+      font-style: normal;
+      color: transparent;
+      -webkit-text-stroke: 1px rgba(255,255,255,0.3);
+      position: relative;
+    }
+    .hero-title .accent-word {
+      color: var(--accent);
+      position: relative;
+      display: inline-block;
+    }
+    .hero-title .accent-word::after {
+      content: '';
+      position: absolute;
+      bottom: 4px; left: 0; right: 0;
+      height: 3px;
+      background: var(--accent);
+      opacity: 0.35;
+      border-radius: 2px;
+    }
+
+    .hero-body {
+      max-width: 520px;
+      font-size: 17px;
+      line-height: 1.7;
+      color: var(--muted);
+      margin-bottom: 48px;
+      opacity: 0;
+      animation: fadeUp 0.9s ease 0.5s forwards;
+    }
+
+    .hero-actions {
+      display: flex;
+      align-items: center;
+      gap: 20px;
+      opacity: 0;
+      animation: fadeUp 0.9s ease 0.65s forwards;
+    }
+
+    .btn-primary {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      padding: 15px 32px;
+      background: var(--accent);
+      color: #000;
+      font-family: 'Syne', sans-serif;
+      font-weight: 700;
+      font-size: 15px;
+      letter-spacing: 0.02em;
+      border-radius: 4px;
+      text-decoration: none;
+      transition: box-shadow 0.3s, transform 0.2s;
+    }
+    .btn-primary:hover {
+      box-shadow: 0 0 40px rgba(0,229,160,0.4);
+      transform: translateY(-2px);
+    }
+    .btn-primary svg { transition: transform 0.2s; }
+    .btn-primary:hover svg { transform: translateX(4px); }
+
+    .btn-ghost {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 15px 28px;
+      background: transparent;
+      color: var(--muted);
+      font-size: 14px;
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      text-decoration: none;
+      transition: border-color 0.2s, color 0.2s;
+    }
+    .btn-ghost:hover { border-color: rgba(255,255,255,0.2); color: var(--text); }
+
+    /* Stats strip */
+    .stats-strip {
+      position: relative;
+      z-index: 1;
+      margin: 0 48px;
+      padding: 32px 48px;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      background: var(--card);
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 0;
+      margin-bottom: 100px;
+      opacity: 0;
+      animation: fadeUp 0.9s ease 0.8s forwards;
+    }
+    .stat {
+      padding: 16px 32px;
+      border-right: 1px solid var(--border);
+    }
+    .stat:last-child { border-right: none; }
+    .stat-value {
+      font-family: 'Syne', sans-serif;
+      font-weight: 800;
+      font-size: 36px;
+      color: var(--text);
+      letter-spacing: -0.03em;
+      margin-bottom: 4px;
+    }
+    .stat-value span { color: var(--accent); }
+    .stat-label {
+      font-size: 13px;
+      color: var(--muted);
+      font-weight: 300;
+    }
+
+    /* Skills section */
+    .section {
+      position: relative;
+      z-index: 1;
+      padding: 80px 48px;
+    }
+
+    .section-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-end;
+      margin-bottom: 48px;
+    }
+    .section-label {
+      font-family: 'DM Mono', monospace;
+      font-size: 11px;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: 12px;
+    }
+    .section-title {
+      font-family: 'Syne', sans-serif;
+      font-weight: 800;
+      font-size: 40px;
+      letter-spacing: -0.03em;
+      line-height: 1.05;
+    }
+
+    .tutor-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 16px;
+    }
+
+    .tutor-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 28px;
+      transition: border-color 0.3s, transform 0.3s, box-shadow 0.3s;
+      position: relative;
+      overflow: hidden;
+    }
+    .tutor-card::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(135deg, rgba(0,229,160,0.04), transparent);
+      opacity: 0;
+      transition: opacity 0.3s;
+    }
+    .tutor-card:hover {
+      border-color: rgba(0,229,160,0.25);
+      transform: translateY(-4px);
+      box-shadow: 0 20px 60px rgba(0,0,0,0.4);
+    }
+    .tutor-card:hover::before { opacity: 1; }
+
+    .card-top {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 20px;
+    }
+    .tutor-info { display: flex; align-items: center; gap: 14px; }
+    .avatar {
+      width: 48px; height: 48px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, var(--accent2), var(--accent));
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: 'Syne', sans-serif;
+      font-weight: 800;
+      font-size: 18px;
+      color: #fff;
+      flex-shrink: 0;
+    }
+    .avatar.purple { background: linear-gradient(135deg, #7b61ff, #a78bfa); }
+    .avatar.orange { background: linear-gradient(135deg, #ff6b35, #ffa45b); }
+    .avatar.blue { background: linear-gradient(135deg, #0ea5e9, #38bdf8); }
+    .avatar.pink { background: linear-gradient(135deg, #ec4899, #f472b6); }
+    .avatar.yellow { background: linear-gradient(135deg, #f59e0b, #fcd34d); }
+
+    .tutor-name {
+      font-family: 'Syne', sans-serif;
+      font-weight: 700;
+      font-size: 16px;
+      margin-bottom: 2px;
+    }
+    .tutor-role {
+      font-size: 12px;
+      color: var(--muted);
+      font-weight: 300;
+    }
+    .rating {
+      font-family: 'DM Mono', monospace;
+      font-size: 13px;
+      color: var(--accent);
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .tutor-skills {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-bottom: 20px;
+    }
+    .skill-tag {
+      padding: 4px 12px;
+      border-radius: 3px;
+      font-family: 'DM Mono', monospace;
+      font-size: 11px;
+      font-weight: 500;
+      background: rgba(123,97,255,0.12);
+      color: #a78bfa;
+      border: 1px solid rgba(123,97,255,0.2);
+    }
+    .skill-tag.green {
+      background: rgba(0,229,160,0.08);
+      color: var(--accent);
+      border-color: rgba(0,229,160,0.2);
+    }
+    .skill-tag.orange {
+      background: rgba(255,107,53,0.1);
+      color: #ff9a7b;
+      border-color: rgba(255,107,53,0.2);
+    }
+
+    .tutor-meta {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding-top: 20px;
+      border-top: 1px solid var(--border);
+    }
+    .students-count {
+      font-size: 13px;
+      color: var(--muted);
+    }
+    .students-count strong {
+      color: var(--text);
+      font-weight: 500;
+    }
+    .card-link {
+      font-family: 'DM Mono', monospace;
+      font-size: 12px;
+      color: var(--accent);
+      text-decoration: none;
+      letter-spacing: 0.05em;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      transition: gap 0.2s;
+    }
+    .card-link:hover { gap: 10px; }
+
+    /* Topics strip */
+    .topics-marquee {
+      position: relative;
+      z-index: 1;
+      padding: 40px 0;
+      overflow: hidden;
+      border-top: 1px solid var(--border);
+      border-bottom: 1px solid var(--border);
+      background: var(--surface);
+    }
+    .marquee-track {
+      display: flex;
+      gap: 0;
+      animation: marquee 30s linear infinite;
+      width: max-content;
+    }
+    .marquee-item {
+      display: flex;
+      align-items: center;
+      gap: 24px;
+      padding: 0 40px;
+      font-family: 'Syne', sans-serif;
+      font-weight: 700;
+      font-size: 14px;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      color: var(--muted);
+      white-space: nowrap;
+    }
+    .marquee-dot {
+      width: 5px; height: 5px;
+      border-radius: 50%;
+      background: var(--accent);
+      flex-shrink: 0;
+    }
+    @keyframes marquee {
+      from { transform: translateX(0); }
+      to { transform: translateX(-50%); }
+    }
+
+    /* CTA section */
+    .cta-section {
+      position: relative;
+      z-index: 1;
+      padding: 100px 48px;
+      text-align: center;
+    }
+    .cta-box {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 80px 60px;
+      position: relative;
+      overflow: hidden;
+    }
+    .cta-box::before {
+      content: '';
+      position: absolute;
+      top: -1px; left: 10%; right: 10%;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, var(--accent), transparent);
+    }
+    .cta-box::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(ellipse 60% 40% at 50% 0%, rgba(0,229,160,0.06), transparent);
+      pointer-events: none;
+    }
+    .cta-title {
+      font-family: 'Syne', sans-serif;
+      font-weight: 800;
+      font-size: clamp(36px, 5vw, 60px);
+      letter-spacing: -0.03em;
+      margin-bottom: 20px;
+      line-height: 1;
+    }
+    .cta-sub {
+      font-size: 17px;
+      color: var(--muted);
+      max-width: 460px;
+      margin: 0 auto 40px;
+      line-height: 1.6;
+    }
+
+    /* Footer */
+    footer {
+      position: relative;
+      z-index: 1;
+      padding: 28px 48px;
+      border-top: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .footer-logo {
+      font-family: 'Syne', sans-serif;
+      font-weight: 800;
+      font-size: 16px;
+    }
+    .footer-copy {
+      font-size: 13px;
+      color: var(--muted);
+      font-family: 'DM Mono', monospace;
+    }
+
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(24px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* Scrollbar */
+    ::-webkit-scrollbar { width: 4px; }
+    ::-webkit-scrollbar-track { background: var(--bg); }
+    ::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.1); border-radius: 2px; }
+  </style>
 </head>
-
 <body>
 
-<div class="navbar">
+  <!-- Custom cursor -->
+  <div class="cursor" id="cursor"></div>
+  <div class="cursor-ring" id="cursorRing"></div>
 
-    <h2>SkillConnect</h2>
+  <!-- Background blobs -->
+  <div class="blob blob-1"></div>
+  <div class="blob blob-2"></div>
 
-    <div class="nav-links">
-        <a href="/login">Get Started</a>
+  <!-- Navbar -->
+  <nav>
+    <div class="logo">
+      <span class="logo-dot"></span>
+      SkillConnect
+    </div>
+    <div class="nav-right">
+      <a class="nav-link" href="#">Explore</a>
+      <a class="nav-link" href="#">Tutors</a>
+      <a class="nav-link" href="#">Community</a>
+      <a class="nav-cta" href="/login">Get Started</a>
+    </div>
+  </nav>
+
+  <!-- Hero -->
+  <section class="hero">
+    <div class="hero-label">Developer Learning Platform</div>
+    <h1 class="hero-title">
+      Share skills.<br>
+      <em>Build</em> the<br>
+      <span class="accent-word">future.</span>
+    </h1>
+    <p class="hero-body">
+      A community platform where developers teach and learn together — Web Development, Data Structures, Python, Machine Learning, and beyond.
+    </p>
+    <div class="hero-actions">
+      <a href="/login" class="btn-primary">
+        Explore Tutors
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+          <path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </a>
+      <a href="#tutors" class="btn-ghost">
+        <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
+          <circle cx="7" cy="7" r="6" stroke="currentColor" stroke-width="1.2"/>
+          <path d="M5.5 7l1.5 1.5L9 5" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+        How it works
+      </a>
+    </div>
+  </section>
+
+  <!-- Stats strip -->
+  <div class="stats-strip">
+    <div class="stat">
+      <div class="stat-value">4<span>k</span>+</div>
+      <div class="stat-label">Active Tutors</div>
+    </div>
+    <div class="stat">
+      <div class="stat-value">28<span>k</span></div>
+      <div class="stat-label">Developers Learning</div>
+    </div>
+    <div class="stat">
+      <div class="stat-value">120<span>+</span></div>
+      <div class="stat-label">Technical Topics</div>
+    </div>
+    <div class="stat">
+      <div class="stat-value">4.9<span>★</span></div>
+      <div class="stat-label">Average Rating</div>
+    </div>
+  </div>
+
+  <!-- Marquee -->
+  <div class="topics-marquee">
+    <div class="marquee-track" id="marqueeTrack"></div>
+  </div>
+
+  <!-- Tutors section -->
+  <section class="section" id="tutors">
+    <div class="section-header">
+      <div>
+        <div class="section-label">Featured Educators</div>
+        <div class="section-title">Top tutors<br>this week</div>
+      </div>
+      <a href="/login" class="card-link" style="font-size:14px;">
+        View all tutors
+        <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
+          <path d="M2 7h10M8 3l4 4-4 4" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </a>
     </div>
 
-</div>
+    <div class="tutor-grid">
 
+      <div class="tutor-card">
+        <div class="card-top">
+          <div class="tutor-info">
+            <div class="avatar">AS</div>
+            <div>
+              <div class="tutor-name">Arjun S.</div>
+              <div class="tutor-role">Senior Engineer @ Google</div>
+            </div>
+          </div>
+          <div class="rating">★ 4.97</div>
+        </div>
+        <div class="tutor-skills">
+          <span class="skill-tag green">Python</span>
+          <span class="skill-tag green">ML</span>
+          <span class="skill-tag">TensorFlow</span>
+        </div>
+        <div class="tutor-meta">
+          <div class="students-count"><strong>342</strong> students</div>
+          <a href="/login" class="card-link">Book session →</a>
+        </div>
+      </div>
 
-<div class="hero">
+      <div class="tutor-card">
+        <div class="card-top">
+          <div class="tutor-info">
+            <div class="avatar purple">MK</div>
+            <div>
+              <div class="tutor-name">Maya K.</div>
+              <div class="tutor-role">Frontend Architect</div>
+            </div>
+          </div>
+          <div class="rating">★ 4.95</div>
+        </div>
+        <div class="tutor-skills">
+          <span class="skill-tag">React</span>
+          <span class="skill-tag">TypeScript</span>
+          <span class="skill-tag orange">Web Dev</span>
+        </div>
+        <div class="tutor-meta">
+          <div class="students-count"><strong>519</strong> students</div>
+          <a href="/login" class="card-link">Book session →</a>
+        </div>
+      </div>
 
-<h1>Share Skills. Learn Together.</h1>
+      <div class="tutor-card">
+        <div class="card-top">
+          <div class="tutor-info">
+            <div class="avatar orange">JL</div>
+            <div>
+              <div class="tutor-name">James L.</div>
+              <div class="tutor-role">Systems & Algorithms</div>
+            </div>
+          </div>
+          <div class="rating">★ 4.98</div>
+        </div>
+        <div class="tutor-skills">
+          <span class="skill-tag">DSA</span>
+          <span class="skill-tag orange">C++</span>
+          <span class="skill-tag">Interview Prep</span>
+        </div>
+        <div class="tutor-meta">
+          <div class="students-count"><strong>891</strong> students</div>
+          <a href="/login" class="card-link">Book session →</a>
+        </div>
+      </div>
 
-<p>
-SkillConnect is a community platform where developers can teach
-technical skills like Web Development, Data Structures, Python,
-Machine Learning and more.
-</p>
+      <div class="tutor-card">
+        <div class="card-top">
+          <div class="tutor-info">
+            <div class="avatar blue">NR</div>
+            <div>
+              <div class="tutor-name">Nadia R.</div>
+              <div class="tutor-role">Data Scientist @ Meta</div>
+            </div>
+          </div>
+          <div class="rating">★ 4.93</div>
+        </div>
+        <div class="tutor-skills">
+          <span class="skill-tag green">Data Science</span>
+          <span class="skill-tag">SQL</span>
+          <span class="skill-tag">Pandas</span>
+        </div>
+        <div class="tutor-meta">
+          <div class="students-count"><strong>214</strong> students</div>
+          <a href="/login" class="card-link">Book session →</a>
+        </div>
+      </div>
 
-<p>
-Find mentors, share your knowledge, and grow with other developers.
-</p>
+      <div class="tutor-card">
+        <div class="card-top">
+          <div class="tutor-info">
+            <div class="avatar pink">EC</div>
+            <div>
+              <div class="tutor-name">Elena C.</div>
+              <div class="tutor-role">Full-Stack Developer</div>
+            </div>
+          </div>
+          <div class="rating">★ 4.96</div>
+        </div>
+        <div class="tutor-skills">
+          <span class="skill-tag orange">Node.js</span>
+          <span class="skill-tag">GraphQL</span>
+          <span class="skill-tag">PostgreSQL</span>
+        </div>
+        <div class="tutor-meta">
+          <div class="students-count"><strong>437</strong> students</div>
+          <a href="/login" class="card-link">Book session →</a>
+        </div>
+      </div>
 
-<a href="/login">
-<button class="btn">Explore Tutors</button>
-</a>
+      <div class="tutor-card">
+        <div class="card-top">
+          <div class="tutor-info">
+            <div class="avatar yellow">DP</div>
+            <div>
+              <div class="tutor-name">Dev P.</div>
+              <div class="tutor-role">DevOps & Cloud Lead</div>
+            </div>
+          </div>
+          <div class="rating">★ 4.91</div>
+        </div>
+        <div class="tutor-skills">
+          <span class="skill-tag">Docker</span>
+          <span class="skill-tag green">AWS</span>
+          <span class="skill-tag">Kubernetes</span>
+        </div>
+        <div class="tutor-meta">
+          <div class="students-count"><strong>288</strong> students</div>
+          <a href="/login" class="card-link">Book session →</a>
+        </div>
+      </div>
 
-</div>
+    </div>
+  </section>
 
+  <!-- CTA -->
+  <section class="cta-section">
+    <div class="cta-box">
+      <div class="cta-title">Ready to level up?</div>
+      <p class="cta-sub">Join thousands of developers who are learning and teaching on SkillConnect every day.</p>
+      <a href="/login" class="btn-primary">
+        Start for free
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+          <path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </a>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer>
+    <div class="footer-logo">
+      <span style="color:var(--accent)">●</span> SkillConnect
+    </div>
+    <div class="footer-copy">© 2026 SkillConnect. All rights reserved.</div>
+  </footer>
+
+  <script>
+    // Custom cursor
+    const cursor = document.getElementById('cursor');
+    const ring = document.getElementById('cursorRing');
+    let mx = 0, my = 0, rx = 0, ry = 0;
+
+    document.addEventListener('mousemove', e => {
+      mx = e.clientX; my = e.clientY;
+      cursor.style.left = mx + 'px';
+      cursor.style.top = my + 'px';
+    });
+
+    function animateRing() {
+      rx += (mx - rx) * 0.12;
+      ry += (my - ry) * 0.12;
+      ring.style.left = rx + 'px';
+      ring.style.top = ry + 'px';
+      requestAnimationFrame(animateRing);
+    }
+    animateRing();
+
+    document.querySelectorAll('a, button').forEach(el => {
+      el.addEventListener('mouseenter', () => {
+        cursor.style.width = '20px';
+        cursor.style.height = '20px';
+        ring.style.width = '52px';
+        ring.style.height = '52px';
+        ring.style.borderColor = 'rgba(0,229,160,0.6)';
+      });
+      el.addEventListener('mouseleave', () => {
+        cursor.style.width = '10px';
+        cursor.style.height = '10px';
+        ring.style.width = '36px';
+        ring.style.height = '36px';
+        ring.style.borderColor = 'rgba(0,229,160,0.4)';
+      });
+    });
+
+    // Marquee
+    const topics = [
+      'Web Development', 'Machine Learning', 'Data Structures', 'Python',
+      'React & Next.js', 'System Design', 'DevOps', 'SQL & Databases',
+      'Computer Vision', 'Algorithms', 'TypeScript', 'Cloud Architecture'
+    ];
+    const track = document.getElementById('marqueeTrack');
+    const doubled = [...topics, ...topics];
+    doubled.forEach(t => {
+      const item = document.createElement('div');
+      item.className = 'marquee-item';
+      item.innerHTML = `<span class="marquee-dot"></span>${t}`;
+      track.appendChild(item);
+    });
+  </script>
 </body>
 </html>

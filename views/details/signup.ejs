@@ -3,129 +3,306 @@
 <head>
     <title>Signup - SkillConnect</title>
 
-    <style>
-        body{
-            font-family: Arial, Helvetica, sans-serif;
-            background:#f4f4f4;
-            margin:0;
-        }
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;600&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
 
-        .navbar{
-            display:flex;
-            justify-content:space-between;
-            padding:15px 40px;
-            background:#111;
-            color:white;
-        }
+<style>
 
-        .navbar a{
-            color:white;
-            text-decoration:none;
-            margin-left:15px;
-        }
+*, *::before, *::after { box-sizing:border-box; margin:0; padding:0; }
 
-        .container{
-            display:flex;
-            justify-content:center;
-            align-items:center;
-            height:80vh;
-        }
+:root{
+--bg:#0a0a0f;
+--surface:#12121a;
+--border:rgba(255,255,255,0.07);
+--accent:#c8a96e;
+--accent-dim:rgba(200,169,110,0.12);
+--text:#f0ece4;
+--muted:#6b6878;
+--error-bg:rgba(255,80,80,0.08);
+--success-bg:rgba(80,200,120,0.08);
+}
 
-        .box{
-            background:white;
-            padding:40px;
-            width:350px;
-            border-radius:8px;
-            box-shadow:0 0 10px rgba(0,0,0,0.1);
-        }
+body{
+font-family:'DM Sans',sans-serif;
+background:var(--bg);
+color:var(--text);
+min-height:100vh;
+display:flex;
+flex-direction:column;
+overflow-x:hidden;
+}
 
-        input{
-            width:100%;
-            padding:10px;
-            margin-top:8px;
-            margin-bottom:15px;
-        }
+/* Ambient background */
 
-        button{
-            width:100%;
-            padding:10px;
-            background:#0077ff;
-            border:none;
-            color:white;
-            cursor:pointer;
-        }
+body::before{
+content:'';
+position:fixed;
+top:-200px;
+right:-200px;
+width:600px;
+height:600px;
+background:radial-gradient(circle, rgba(200,169,110,0.06) 0%, transparent 70%);
+pointer-events:none;
+}
 
-        .bottom{
-            text-align:center;
-            margin-top:15px;
-        }
+body::after{
+content:'';
+position:fixed;
+bottom:-100px;
+left:-100px;
+width:400px;
+height:400px;
+background:radial-gradient(circle, rgba(100,80,200,0.05) 0%, transparent 70%);
+pointer-events:none;
+}
 
-        .alert-error{
-            background:#ffdddd;
-            padding:10px;
-            margin-bottom:15px;
-            border-radius:5px;
-        }
+/* Navbar */
 
-        .alert-success{
-            background:#ddffdd;
-            padding:10px;
-            margin-bottom:15px;
-            border-radius:5px;
-        }
+.navbar{
+display:flex;
+justify-content:space-between;
+align-items:center;
+padding:22px 48px;
+border-bottom:1px solid var(--border);
+}
 
-    </style>
+.navbar-brand{
+font-family:'Playfair Display',serif;
+font-size:1.4rem;
+font-weight:600;
+color:var(--text);
+text-decoration:none;
+}
+
+.navbar-brand span{
+color:var(--accent);
+}
+
+.navbar-links{
+display:flex;
+gap:8px;
+}
+
+.navbar-links a{
+color:var(--muted);
+text-decoration:none;
+font-size:0.875rem;
+padding:8px 16px;
+border-radius:6px;
+transition:0.2s;
+}
+
+.navbar-links a:hover{
+color:var(--text);
+background:rgba(255,255,255,0.04);
+}
+
+/* Layout */
+
+.container{
+flex:1;
+display:flex;
+align-items:center;
+justify-content:center;
+padding:48px 24px;
+}
+
+/* Card */
+
+.box{
+width:100%;
+max-width:400px;
+background:var(--surface);
+border:1px solid var(--border);
+border-radius:16px;
+padding:44px 40px;
+}
+
+/* Header */
+
+.box-header{
+margin-bottom:32px;
+}
+
+.box-eyebrow{
+font-size:0.72rem;
+font-weight:500;
+letter-spacing:0.12em;
+text-transform:uppercase;
+color:var(--accent);
+margin-bottom:10px;
+}
+
+.box h2{
+font-family:'Playfair Display',serif;
+font-size:2rem;
+font-weight:500;
+}
+
+/* Flash */
+
+.flash{
+padding:12px 16px;
+border-radius:8px;
+font-size:0.875rem;
+margin-bottom:20px;
+border:1px solid;
+}
+
+.flash-error{
+background:var(--error-bg);
+border-color:rgba(255,80,80,0.2);
+color:#ff9090;
+}
+
+.flash-success{
+background:var(--success-bg);
+border-color:rgba(80,200,120,0.2);
+color:#80e0a0;
+}
+
+/* Form */
+
+.field{
+margin-bottom:20px;
+}
+
+label{
+display:block;
+font-size:0.8rem;
+font-weight:500;
+letter-spacing:0.05em;
+text-transform:uppercase;
+color:var(--muted);
+margin-bottom:8px;
+}
+
+input{
+width:100%;
+padding:13px 16px;
+background:rgba(255,255,255,0.04);
+border:1px solid var(--border);
+border-radius:8px;
+color:var(--text);
+font-size:0.95rem;
+outline:none;
+transition:0.2s;
+}
+
+input::placeholder{ color:var(--muted); }
+
+input:focus{
+border-color:var(--accent);
+background:var(--accent-dim);
+box-shadow:0 0 0 3px rgba(200,169,110,0.08);
+}
+
+/* Button */
+
+.btn{
+width:100%;
+padding:13px;
+border:none;
+border-radius:8px;
+font-size:0.9rem;
+font-weight:500;
+cursor:pointer;
+letter-spacing:0.04em;
+transition:0.2s;
+}
+
+.btn-primary{
+background:var(--accent);
+color:#0a0a0f;
+}
+
+.btn-primary:hover{
+box-shadow:0 4px 20px rgba(200,169,110,0.25);
+}
+
+/* Bottom */
+
+.bottom{
+text-align:center;
+margin-top:28px;
+padding-top:24px;
+border-top:1px solid var(--border);
+}
+
+.bottom p{
+font-size:0.875rem;
+color:var(--muted);
+margin-bottom:6px;
+}
+
+.bottom a{
+font-size:0.875rem;
+color:var(--accent);
+text-decoration:none;
+font-weight:500;
+}
+
+</style>
+
 </head>
 
 <body>
 
-<div class="navbar">
-    <h2>SkillConnect</h2>
-    <div>
-        <a href="/">Home</a>
-        <a href="/login">Login</a>
-    </div>
+<nav class="navbar">
+<a href="/" class="navbar-brand">Skill<span>Connect</span></a>
+
+<div class="navbar-links">
+<a href="/">Home</a>
+<a href="/login">Login</a>
 </div>
+</nav>
 
 <div class="container">
 
 <div class="box">
 
-<h2>Create Account</h2>
+<div class="box-header">
+<div class="box-eyebrow">Join SkillConnect</div>
+<h2>Create your account</h2>
+</div>
 
 <!-- Flash Messages -->
 
 <% if(error && error.length > 0){ %>
-<div class="alert-error">
-    <%= error %>
+<div class="flash flash-error">
+<%= error %>
 </div>
 <% } %>
 
 <% if(success && success.length > 0){ %>
-<div class="alert-success">
-    <%= success %>
+<div class="flash flash-success">
+<%= success %>
 </div>
 <% } %>
 
-
 <form action="/signup" method="POST">
 
+<div class="field">
 <label>Username</label>
-<input type="text" name="username" required>
+<input type="text" name="username" placeholder="Enter username" required>
+</div>
 
+<div class="field">
 <label>Email</label>
-<input type="email" name="email" required>
+<input type="email" name="email" placeholder="Enter email" required>
+</div>
 
+<div class="field">
 <label>Password</label>
-<input type="password" name="password" required>
+<input type="password" name="password" placeholder="••••••••" required>
+</div>
 
-<button type="submit">Signup</button>
+<button type="submit" class="btn btn-primary">Create Account</button>
 
 </form>
 
 <div class="bottom">
 <p>Already have an account?</p>
-<a href="/login">Login</a>
+<a href="/login">Sign in →</a>
 </div>
 
 </div>
