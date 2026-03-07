@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Signup - SkillConnect</title>
+
+    <style>
+        body{
+            font-family: Arial, Helvetica, sans-serif;
+            background:#f4f4f4;
+            margin:0;
+        }
+
+        .navbar{
+            display:flex;
+            justify-content:space-between;
+            padding:15px 40px;
+            background:#111;
+            color:white;
+        }
+
+        .navbar a{
+            color:white;
+            text-decoration:none;
+            margin-left:15px;
+        }
+
+        .container{
+            display:flex;
+            justify-content:center;
+            align-items:center;
+            height:80vh;
+        }
+
+        .box{
+            background:white;
+            padding:40px;
+            width:350px;
+            border-radius:8px;
+            box-shadow:0 0 10px rgba(0,0,0,0.1);
+        }
+
+        input{
+            width:100%;
+            padding:10px;
+            margin-top:8px;
+            margin-bottom:15px;
+        }
+
+        button{
+            width:100%;
+            padding:10px;
+            background:#0077ff;
+            border:none;
+            color:white;
+            cursor:pointer;
+        }
+
+        .bottom{
+            text-align:center;
+            margin-top:15px;
+        }
+
+        .alert-error{
+            background:#ffdddd;
+            padding:10px;
+            margin-bottom:15px;
+            border-radius:5px;
+        }
+
+        .alert-success{
+            background:#ddffdd;
+            padding:10px;
+            margin-bottom:15px;
+            border-radius:5px;
+        }
+
+    </style>
+</head>
+
+<body>
+
+<div class="navbar">
+    <h2>SkillConnect</h2>
+    <div>
+        <a href="/">Home</a>
+        <a href="/login">Login</a>
+    </div>
+</div>
+
+<div class="container">
+
+<div class="box">
+
+<h2>Create Account</h2>
+
+<!-- Flash Messages -->
+
+<% if(error && error.length > 0){ %>
+<div class="alert-error">
+    <%= error %>
+</div>
+<% } %>
+
+<% if(success && success.length > 0){ %>
+<div class="alert-success">
+    <%= success %>
+</div>
+<% } %>
+
+
+<form action="/signup" method="POST">
+
+<label>Username</label>
+<input type="text" name="username" required>
+
+<label>Email</label>
+<input type="email" name="email" required>
+
+<label>Password</label>
+<input type="password" name="password" required>
+
+<button type="submit">Signup</button>
+
+</form>
+
+<div class="bottom">
+<p>Already have an account?</p>
+<a href="/login">Login</a>
+</div>
+
+</div>
+
+</div>
+
+</body>
+</html>
