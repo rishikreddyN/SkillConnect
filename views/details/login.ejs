@@ -1,366 +1,571 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <title>Login - SkillConnect</title>
-    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;600&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Login - SkillConnect</title>
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;700;800&family=DM+Mono:wght@400;500&family=DM+Sans:ital,wght@0,300;0,400;1,300&display=swap" rel="stylesheet"/>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
-    <style>
-        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --bg:      #0a0a0f;
+      --surface: #12121a;
+      --card:    #16161f;
+      --border:  rgba(255,255,255,0.07);
+      --accent:  #00e5a0;
+      --accent2: #7b61ff;
+      --text:    #f0f0f8;
+      --muted:   #6b6b80;
+    }
 
-        :root {
-            --bg: #0a0a0f;
-            --surface: #12121a;
-            --border: rgba(255,255,255,0.07);
-            --accent: #c8a96e;
-            --accent-dim: rgba(200,169,110,0.12);
-            --text: #f0ece4;
-            --muted: #6b6878;
-            --error-bg: rgba(255,80,80,0.08);
-            --success-bg: rgba(80,200,120,0.08);
-        }
+    html { scroll-behavior: smooth; }
 
-        body {
-            font-family: 'DM Sans', sans-serif;
-            background: var(--bg);
-            color: var(--text);
-            min-height: 100vh;
-            display: flex;
-            flex-direction: column;
-            overflow-x: hidden;
-        }
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'DM Sans', sans-serif;
+      font-weight: 300;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      overflow-x: hidden;
+      cursor: none;
+    }
 
-        /* Ambient background */
-        body::before {
-            content: '';
-            position: fixed;
-            top: -200px;
-            right: -200px;
-            width: 600px;
-            height: 600px;
-            background: radial-gradient(circle, rgba(200,169,110,0.06) 0%, transparent 70%);
-            pointer-events: none;
-            z-index: 0;
-        }
-        body::after {
-            content: '';
-            position: fixed;
-            bottom: -100px;
-            left: -100px;
-            width: 400px;
-            height: 400px;
-            background: radial-gradient(circle, rgba(100,80,200,0.05) 0%, transparent 70%);
-            pointer-events: none;
-            z-index: 0;
-        }
+    ::-webkit-scrollbar { width: 4px; }
+    ::-webkit-scrollbar-track { background: var(--bg); }
+    ::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.1); border-radius: 2px; }
 
-        /* Navbar */
-        .navbar {
-            position: relative;
-            z-index: 10;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 22px 48px;
-            border-bottom: 1px solid var(--border);
-            backdrop-filter: blur(10px);
-        }
+    /* Background grid */
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background-image:
+        linear-gradient(rgba(255,255,255,0.025) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255,255,255,0.025) 1px, transparent 1px);
+      background-size: 60px 60px;
+      pointer-events: none;
+      z-index: 0;
+    }
 
-        .navbar-brand {
-            font-family: 'Playfair Display', serif;
-            font-size: 1.4rem;
-            font-weight: 600;
-            color: var(--text);
-            letter-spacing: 0.02em;
-            text-decoration: none;
-        }
+    /* Blobs */
+    .blob {
+      position: fixed;
+      border-radius: 50%;
+      filter: blur(120px);
+      pointer-events: none;
+      z-index: 0;
+      opacity: 0.18;
+    }
+    .blob-1 {
+      width: 600px; height: 600px;
+      background: var(--accent2);
+      top: -200px; right: -100px;
+      animation: blobFloat1 12s ease-in-out infinite;
+    }
+    .blob-2 {
+      width: 500px; height: 500px;
+      background: var(--accent);
+      bottom: -150px; left: -100px;
+      animation: blobFloat2 15s ease-in-out infinite;
+    }
+    @keyframes blobFloat1 {
+      0%, 100% { transform: translate(0,0) scale(1); }
+      50% { transform: translate(-40px,60px) scale(1.1); }
+    }
+    @keyframes blobFloat2 {
+      0%, 100% { transform: translate(0,0) scale(1); }
+      50% { transform: translate(50px,-40px) scale(1.08); }
+    }
 
-        .navbar-brand span {
-            color: var(--accent);
-        }
+    /* Cursor */
+    .cursor {
+      width: 10px; height: 10px;
+      background: var(--accent);
+      border-radius: 50%;
+      position: fixed; top: 0; left: 0;
+      pointer-events: none;
+      z-index: 9999;
+      transform: translate(-50%, -50%);
+      transition: width 0.3s, height 0.3s;
+      mix-blend-mode: screen;
+    }
+    .cursor-ring {
+      width: 36px; height: 36px;
+      border: 1px solid rgba(0,229,160,0.4);
+      border-radius: 50%;
+      position: fixed; top: 0; left: 0;
+      pointer-events: none;
+      z-index: 9998;
+      transform: translate(-50%, -50%);
+      transition: width 0.3s, height 0.3s, border-color 0.3s;
+    }
 
-        .navbar-links {
-            display: flex;
-            gap: 8px;
-        }
+    /* ===== NAVBAR ===== */
+    nav {
+      position: relative;
+      z-index: 100;
+      padding: 20px 48px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-bottom: 1px solid var(--border);
+      background: rgba(10,10,15,0.85);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+    }
 
-        .navbar-links a {
-            color: var(--muted);
-            text-decoration: none;
-            font-size: 0.875rem;
-            font-weight: 400;
-            padding: 8px 16px;
-            border-radius: 6px;
-            transition: color 0.2s, background 0.2s;
-            letter-spacing: 0.02em;
-        }
+    .logo {
+      font-family: 'Syne', sans-serif;
+      font-weight: 800;
+      font-size: 22px;
+      letter-spacing: -0.5px;
+      color: var(--text);
+      text-decoration: none;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .logo-dot {
+      width: 8px; height: 8px;
+      background: var(--accent);
+      border-radius: 50%;
+      flex-shrink: 0;
+      animation: pulse 2s ease-in-out infinite;
+    }
+    @keyframes pulse {
+      0%, 100% { box-shadow: 0 0 0 0 rgba(0,229,160,0.5); }
+      50%       { box-shadow: 0 0 0 6px rgba(0,229,160,0); }
+    }
 
-        .navbar-links a:hover {
-            color: var(--text);
-            background: rgba(255,255,255,0.04);
-        }
+    .nav-right { display: flex; align-items: center; gap: 24px; }
 
-        /* Main layout */
-        .container {
-            flex: 1;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            padding: 48px 24px;
-            position: relative;
-            z-index: 1;
-        }
+    .nav-link {
+      color: var(--muted);
+      text-decoration: none;
+      font-size: 14px;
+      font-weight: 400;
+      letter-spacing: 0.02em;
+      transition: color 0.2s;
+    }
+    .nav-link:hover { color: var(--text); }
 
-        /* Card */
-        .box {
-            width: 100%;
-            max-width: 400px;
-            background: var(--surface);
-            border: 1px solid var(--border);
-            border-radius: 16px;
-            padding: 44px 40px;
-            animation: slideUp 0.5s cubic-bezier(0.16, 1, 0.3, 1) both;
-        }
+    .nav-cta {
+      padding: 9px 20px;
+      background: transparent;
+      border: 1px solid var(--accent);
+      color: var(--accent);
+      border-radius: 4px;
+      font-size: 14px;
+      font-family: 'DM Mono', monospace;
+      font-weight: 500;
+      letter-spacing: 0.03em;
+      text-decoration: none;
+      transition: background 0.25s, color 0.25s, box-shadow 0.25s;
+      white-space: nowrap;
+    }
+    .nav-cta:hover {
+      background: var(--accent);
+      color: #000;
+      box-shadow: 0 0 24px rgba(0,229,160,0.3);
+    }
 
-        @keyframes slideUp {
-            from { opacity: 0; transform: translateY(20px); }
-            to   { opacity: 1; transform: translateY(0); }
-        }
+    /* ===== MAIN ===== */
+    main {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 60px 24px;
+      position: relative;
+      z-index: 1;
+    }
 
-        .box-header {
-            margin-bottom: 32px;
-        }
+    /* ===== CARD ===== */
+    .card {
+      width: 100%;
+      max-width: 440px;
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 48px 44px;
+      position: relative;
+      overflow: hidden;
+      animation: fadeUp 0.7s cubic-bezier(0.16,1,0.3,1) both;
+    }
 
-        .box-eyebrow {
-            font-size: 0.72rem;
-            font-weight: 500;
-            letter-spacing: 0.12em;
-            text-transform: uppercase;
-            color: var(--accent);
-            margin-bottom: 10px;
-        }
+    .card::before {
+      content: '';
+      position: absolute;
+      top: -1px; left: 15%; right: 15%;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, var(--accent), transparent);
+    }
+    .card::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(ellipse 70% 40% at 50% 0%, rgba(0,229,160,0.05), transparent);
+      pointer-events: none;
+    }
 
-        .box h2 {
-            font-family: 'Playfair Display', serif;
-            font-size: 2rem;
-            font-weight: 500;
-            color: var(--text);
-            line-height: 1.2;
-        }
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(24px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
 
-        /* Flash messages */
-        .flash {
-            padding: 12px 16px;
-            border-radius: 8px;
-            font-size: 0.875rem;
-            margin-bottom: 20px;
-            border: 1px solid;
-            animation: fadeIn 0.3s ease;
-        }
+    /* Card header */
+    .card-header { margin-bottom: 36px; }
 
-        @keyframes fadeIn {
-            from { opacity: 0; } to { opacity: 1; }
-        }
+    .card-eyebrow {
+      font-family: 'DM Mono', monospace;
+      font-size: 11px;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 12px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .card-eyebrow::before {
+      content: '';
+      width: 24px; height: 1px;
+      background: var(--accent);
+    }
 
-        .flash-error {
-            background: var(--error-bg);
-            border-color: rgba(255,80,80,0.2);
-            color: #ff9090;
-        }
+    .card-title {
+      font-family: 'Syne', sans-serif;
+      font-weight: 800;
+      font-size: 36px;
+      letter-spacing: -0.03em;
+      line-height: 1.05;
+      color: var(--text);
+    }
 
-        .flash-success {
-            background: var(--success-bg);
-            border-color: rgba(80,200,120,0.2);
-            color: #80e0a0;
-        }
+    /* Flash messages */
+    .flash {
+      padding: 12px 16px;
+      border-radius: 6px;
+      font-size: 14px;
+      margin-bottom: 24px;
+      border: 1px solid;
+      animation: fadeIn 0.3s ease;
+    }
+    @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
 
-        /* Form */
-        .field {
-            margin-bottom: 20px;
-        }
+    .flash-error {
+      background: rgba(255,80,80,0.08);
+      border-color: rgba(255,80,80,0.2);
+      color: #ff9090;
+    }
+    .flash-success {
+      background: rgba(0,229,160,0.08);
+      border-color: rgba(0,229,160,0.2);
+      color: var(--accent);
+    }
 
-        label {
-            display: block;
-            font-size: 0.8rem;
-            font-weight: 500;
-            letter-spacing: 0.05em;
-            text-transform: uppercase;
-            color: var(--muted);
-            margin-bottom: 8px;
-        }
+    /* Form */
+    .field { margin-bottom: 20px; }
 
-        input {
-            width: 100%;
-            padding: 13px 16px;
-            background: rgba(255,255,255,0.04);
-            border: 1px solid var(--border);
-            border-radius: 8px;
-            color: var(--text);
-            font-family: 'DM Sans', sans-serif;
-            font-size: 0.95rem;
-            transition: border-color 0.2s, background 0.2s, box-shadow 0.2s;
-            outline: none;
-        }
+    label {
+      display: block;
+      font-family: 'DM Mono', monospace;
+      font-size: 11px;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: 8px;
+    }
 
-        input::placeholder { color: var(--muted); }
+    input {
+      width: 100%;
+      padding: 13px 16px;
+      background: rgba(255,255,255,0.04);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      color: var(--text);
+      font-family: 'DM Sans', sans-serif;
+      font-size: 15px;
+      font-weight: 300;
+      outline: none;
+      transition: border-color 0.2s, background 0.2s, box-shadow 0.2s;
+      /* Prevent zoom on iOS */
+      font-size: max(16px, 15px);
+    }
+    input::placeholder { color: var(--muted); }
+    input:focus {
+      border-color: var(--accent);
+      background: rgba(0,229,160,0.05);
+      box-shadow: 0 0 0 3px rgba(0,229,160,0.08);
+    }
 
-        input:focus {
-            border-color: var(--accent);
-            background: var(--accent-dim);
-            box-shadow: 0 0 0 3px rgba(200,169,110,0.08);
-        }
+    /* Buttons */
+    .btn {
+      width: 100%;
+      padding: 14px 20px;
+      border: none;
+      border-radius: 6px;
+      font-family: 'Syne', sans-serif;
+      font-size: 15px;
+      font-weight: 700;
+      letter-spacing: 0.02em;
+      cursor: pointer;
+      text-decoration: none;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      transition: transform 0.2s, box-shadow 0.3s, background 0.2s, border-color 0.2s;
+      -webkit-tap-highlight-color: transparent;
+    }
+    .btn:active { transform: scale(0.97); }
 
-        /* Buttons */
-        .btn {
-            width: 100%;
-            padding: 13px;
-            border: none;
-            border-radius: 8px;
-            font-family: 'DM Sans', sans-serif;
-            font-size: 0.9rem;
-            font-weight: 500;
-            cursor: pointer;
-            letter-spacing: 0.04em;
-            transition: all 0.2s;
-            position: relative;
-            overflow: hidden;
-        }
+    .btn-primary {
+      background: var(--accent);
+      color: #000;
+      margin-top: 8px;
+    }
+    .btn-primary svg { transition: transform 0.2s; }
+    .btn-primary:hover { box-shadow: 0 0 32px rgba(0,229,160,0.35); transform: translateY(-1px); }
+    .btn-primary:hover svg { transform: translateX(4px); }
 
-        .btn::after {
-            content: '';
-            position: absolute;
-            inset: 0;
-            background: rgba(255,255,255,0);
-            transition: background 0.2s;
-        }
+    /* Divider */
+    .divider {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin: 24px 0;
+      color: var(--muted);
+    }
+    .divider::before, .divider::after {
+      content: '';
+      flex: 1; height: 1px;
+      background: var(--border);
+    }
+    .divider span {
+      font-family: 'DM Mono', monospace;
+      font-size: 11px;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+    }
 
-        .btn:hover::after { background: rgba(255,255,255,0.05); }
-        .btn:active { transform: scale(0.98); }
+    /* Google button */
+    .btn-google {
+      background: transparent;
+      border: 1px solid var(--border);
+      color: var(--text);
+      font-family: 'DM Sans', sans-serif;
+      font-weight: 400;
+      font-size: 14px;
+    }
+    .btn-google:hover {
+      border-color: rgba(255,255,255,0.18);
+      background: rgba(255,255,255,0.04);
+    }
+    .google-icon { width: 18px; height: 18px; flex-shrink: 0; }
 
-        .btn-primary {
-            background: var(--accent);
-            color: #0a0a0f;
-        }
+    /* Card footer */
+    .card-footer {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      margin-top: 28px;
+      padding-top: 24px;
+      border-top: 1px solid var(--border);
+      font-size: 14px;
+      color: var(--muted);
+      flex-wrap: wrap;
+    }
+    .card-footer a {
+      color: var(--accent);
+      text-decoration: none;
+      font-family: 'DM Mono', monospace;
+      font-size: 13px;
+      letter-spacing: 0.03em;
+      transition: opacity 0.2s;
+    }
+    .card-footer a:hover { opacity: 0.7; }
 
-        .btn-primary:hover { box-shadow: 0 4px 20px rgba(200,169,110,0.25); }
+    /* ============================================================
+       RESPONSIVE
+    ============================================================ */
 
-        .divider {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            margin: 20px 0;
-            color: var(--muted);
-            font-size: 0.78rem;
-            letter-spacing: 0.06em;
-            text-transform: uppercase;
-        }
+    /* Tablet */
+    @media (max-width: 768px) {
+      nav { padding: 18px 24px; }
+      .nav-link { display: none; }
+      main { padding: 40px 20px; }
+      .card { padding: 40px 32px; }
+      .card-title { font-size: 32px; }
+    }
 
-        .divider::before, .divider::after {
-            content: '';
-            flex: 1;
-            height: 1px;
-            background: var(--border);
-        }
+    /* Mobile */
+    @media (max-width: 480px) {
+      body { cursor: auto; }
+      .cursor, .cursor-ring { display: none; }
 
-        .btn-google {
-            background: transparent;
-            border: 1px solid var(--border);
-            color: var(--text);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 10px;
-        }
+      nav { padding: 16px 20px; }
+      .logo { font-size: 18px; }
+      .nav-cta { padding: 8px 14px; font-size: 13px; }
 
-        .btn-google:hover {
-            border-color: rgba(255,255,255,0.15);
-            background: rgba(255,255,255,0.04);
-        }
+      main {
+        padding: 24px 16px;
+        /* Let it scroll naturally on small screens */
+        align-items: flex-start;
+        padding-top: 40px;
+      }
 
-        .google-icon {
-            width: 18px;
-            height: 18px;
-            flex-shrink: 0;
-        }
+      .card {
+        padding: 32px 24px;
+        border-radius: 10px;
+        /* Remove overflow hidden so content isn't clipped */
+        max-width: 100%;
+      }
 
-        /* Bottom */
-        .bottom {
-            text-align: center;
-            margin-top: 28px;
-            padding-top: 24px;
-            border-top: 1px solid var(--border);
-        }
+      .card-header { margin-bottom: 28px; }
+      .card-eyebrow { font-size: 10px; }
+      .card-title { font-size: 28px; }
 
-        .bottom p {
-            font-size: 0.875rem;
-            color: var(--muted);
-            margin-bottom: 6px;
-        }
+      .field { margin-bottom: 16px; }
 
-        .bottom a {
-            font-size: 0.875rem;
-            color: var(--accent);
-            text-decoration: none;
-            font-weight: 500;
-            transition: opacity 0.2s;
-        }
+      label { font-size: 10px; margin-bottom: 6px; }
 
-        .bottom a:hover { opacity: 0.75; }
-    </style>
+      input {
+        padding: 12px 14px;
+        border-radius: 6px;
+      }
+
+      .btn {
+        padding: 14px 16px;
+        font-size: 14px;
+        border-radius: 6px;
+      }
+
+      .divider { margin: 20px 0; }
+
+      .card-footer {
+        margin-top: 24px;
+        padding-top: 20px;
+        font-size: 13px;
+        text-align: center;
+      }
+    }
+  </style>
 </head>
-
 <body>
 
-<nav class="navbar">
-    <a href="/" class="navbar-brand">Skill<span>Connect</span></a>
-    <div class="navbar-links">
-        <a href="/">Home</a>
-        <a href="/signup">Sign up</a>
+  <div class="cursor" id="cursor"></div>
+  <div class="cursor-ring" id="cursorRing"></div>
+
+  <div class="blob blob-1"></div>
+  <div class="blob blob-2"></div>
+
+  <!-- Navbar -->
+  <nav>
+    <a href="/" class="logo">
+      <span class="logo-dot"></span>
+      SkillConnect
+    </a>
+    <div class="nav-right">
+      <a class="nav-link" href="/">Home</a>
+      <a class="nav-cta" href="/signup">Sign up</a>
     </div>
-</nav>
+  </nav>
 
-<div class="container">
-    <div class="box">
+  <!-- Main -->
+  <main>
+    <div class="card">
 
-        <div class="box-header">
-            <div class="box-eyebrow">Welcome back</div>
-            <h2>Sign in to your account</h2>
+      <div class="card-header">
+        <div class="card-eyebrow">Welcome back</div>
+        <h2 class="card-title">Sign in to<br>your account</h2>
+      </div>
+
+      <!-- Flash messages -->
+      <!-- Uncomment for EJS:
+      <% if (typeof error !== 'undefined' && error) { %>
+        <div class="flash flash-error"><%= error %></div>
+      <% } %>
+      <% if (typeof success !== 'undefined' && success) { %>
+        <div class="flash flash-success"><%= success %></div>
+      <% } %>
+      -->
+
+      <form action="/login" method="POST">
+        <div class="field">
+          <label for="username">Username</label>
+          <input type="text" id="username" name="username" placeholder="Enter your username" autocomplete="username" required />
         </div>
 
-        <form action="/login" method="POST">
-            <div class="field">
-                <label for="username">Username</label>
-                <input type="text" id="username" name="username" placeholder="Enter your username" required>
-            </div>
-
-            <div class="field">
-                <label for="password">Password</label>
-                <input type="password" id="password" name="password" placeholder="••••••••" required>
-            </div>
-
-            <button type="submit" class="btn btn-primary">Sign In</button>
-        </form>
-
-        <div class="divider">or</div>
-
-        <a href="/auth/google" style="text-decoration:none;">
-            <button class="btn btn-google">
-                <svg class="google-icon" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                    <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/>
-                    <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/>
-                    <path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" fill="#FBBC05"/>
-                    <path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/>
-                </svg>
-                Continue with Google
-            </button>
-        </a>
-
-        <div class="bottom">
-            <p>Don't have an account?</p>
-            <a href="/signup">Create one →</a>
+        <div class="field">
+          <label for="password">Password</label>
+          <input type="password" id="password" name="password" placeholder="••••••••" autocomplete="current-password" required />
         </div>
 
-    </div>
-</div>
+        <button type="submit" class="btn btn-primary">
+          Sign In
+          <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+            <path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </button>
+      </form>
 
+      <div class="divider"><span>or</span></div>
+
+      <a href="/auth/google" class="btn btn-google">
+        <svg class="google-icon" viewBox="0 0 24 24">
+          <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/>
+          <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/>
+          <path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" fill="#FBBC05"/>
+          <path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/>
+        </svg>
+        Continue with Google
+      </a>
+
+      <div class="card-footer">
+        <span>Don't have an account?</span>
+        <a href="/signup">Create one →</a>
+      </div>
+
+    </div>
+  </main>
+
+  <script>
+    // Cursor (desktop only)
+    const cursor = document.getElementById('cursor');
+    const ring = document.getElementById('cursorRing');
+    let mx = 0, my = 0, rx = 0, ry = 0;
+
+    document.addEventListener('mousemove', e => {
+      mx = e.clientX; my = e.clientY;
+      cursor.style.left = mx + 'px';
+      cursor.style.top = my + 'px';
+    });
+
+    (function animateRing() {
+      rx += (mx - rx) * 0.12;
+      ry += (my - ry) * 0.12;
+      ring.style.left = rx + 'px';
+      ring.style.top = ry + 'px';
+      requestAnimationFrame(animateRing);
+    })();
+
+    document.querySelectorAll('a, button, input').forEach(el => {
+      el.addEventListener('mouseenter', () => {
+        cursor.style.width = '20px'; cursor.style.height = '20px';
+        ring.style.width = '52px'; ring.style.height = '52px';
+        ring.style.borderColor = 'rgba(0,229,160,0.6)';
+      });
+      el.addEventListener('mouseleave', () => {
+        cursor.style.width = '10px'; cursor.style.height = '10px';
+        ring.style.width = '36px'; ring.style.height = '36px';
+        ring.style.borderColor = 'rgba(0,229,160,0.4)';
+      });
+    });
+  </script>
 </body>
 </html>

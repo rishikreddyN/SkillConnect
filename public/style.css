@@ -1,0 +1,74 @@
+/* GLOBAL RESET */
+
+*{
+box-sizing:border-box;
+margin:0;
+padding:0;
+}
+
+body{
+font-family:'DM Sans',sans-serif;
+background:#1a1625;
+color:#f0ece4;
+}
+
+/* Container */
+
+.container{
+max-width:1000px;
+margin:auto;
+padding:20px;
+}
+
+/* Buttons */
+
+.btn{
+padding:10px 16px;
+border-radius:8px;
+border:none;
+cursor:pointer;
+}
+
+/* Cards */
+
+.box{
+background:#221d2e;
+border-radius:16px;
+padding:30px;
+margin-bottom:25px;
+}
+
+/* GRID */
+
+.listings-grid{
+display:grid;
+grid-template-columns:repeat(auto-fill,minmax(300px,1fr));
+gap:20px;
+}
+
+/* MOBILE RESPONSIVE */
+
+@media (max-width:768px){
+
+.container{
+padding:15px;
+}
+
+.box{
+padding:20px;
+}
+
+.listings-grid{
+grid-template-columns:1fr;
+}
+
+.buttons{
+flex-direction:column;
+}
+
+.btn{
+width:100%;
+margin-top:10px;
+}
+
+}

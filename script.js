@@ -24,6 +24,7 @@ const flash = require("connect-flash");
 
 app.use(methodOverride("_method"));
 app.use(express.urlencoded({ extended: true }));
+app.use(express.static(path.join(__dirname,"public")));
 
 app.use(session({
     secret: "mysupersecret",

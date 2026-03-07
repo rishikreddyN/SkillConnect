@@ -1,167 +1,638 @@
 <!DOCTYPE html>
-<html>
-
+<html lang="en">
 <head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Edit Listing - SkillConnect</title>
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;700;800&family=DM+Mono:wght@400;500&family=DM+Sans:ital,wght@0,300;0,400;1,300&display=swap" rel="stylesheet"/>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
-<title>Edit Listing</title>
+    html, body, a, button, input, textarea, select, [role="button"] { cursor: none !important; }
 
-<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    :root {
+      --bg:      #0a0a0f;
+      --surface: #12121a;
+      --card:    #16161f;
+      --border:  rgba(255,255,255,0.07);
+      --accent:  #00e5a0;
+      --accent2: #7b61ff;
+      --text:    #f0f0f8;
+      --muted:   #6b6b80;
+    }
 
+    html { scroll-behavior: smooth; }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'DM Sans', sans-serif;
+      font-weight: 300;
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    ::-webkit-scrollbar { width: 4px; }
+    ::-webkit-scrollbar-track { background: var(--bg); }
+    ::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.1); border-radius: 2px; }
+
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background-image:
+        linear-gradient(rgba(255,255,255,0.025) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255,255,255,0.025) 1px, transparent 1px);
+      background-size: 60px 60px;
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    .blob {
+      position: fixed;
+      border-radius: 50%;
+      filter: blur(120px);
+      pointer-events: none;
+      z-index: 0;
+      opacity: 0.15;
+    }
+    .blob-1 {
+      width: 600px; height: 600px;
+      background: var(--accent2);
+      top: -200px; right: -100px;
+      animation: blobFloat1 12s ease-in-out infinite;
+    }
+    .blob-2 {
+      width: 500px; height: 500px;
+      background: var(--accent);
+      bottom: -150px; left: -100px;
+      animation: blobFloat2 15s ease-in-out infinite;
+    }
+    @keyframes blobFloat1 {
+      0%, 100% { transform: translate(0,0) scale(1); }
+      50% { transform: translate(-40px,60px) scale(1.1); }
+    }
+    @keyframes blobFloat2 {
+      0%, 100% { transform: translate(0,0) scale(1); }
+      50% { transform: translate(50px,-40px) scale(1.08); }
+    }
+
+    /* Cursor */
+    .cursor {
+      width: 10px; height: 10px;
+      background: var(--accent);
+      border-radius: 50%;
+      position: fixed; top: 0; left: 0;
+      pointer-events: none;
+      z-index: 9999;
+      transform: translate(-50%, -50%);
+      transition: width 0.3s, height 0.3s;
+      mix-blend-mode: screen;
+    }
+    .cursor-ring {
+      width: 36px; height: 36px;
+      border: 1px solid rgba(0,229,160,0.4);
+      border-radius: 50%;
+      position: fixed; top: 0; left: 0;
+      pointer-events: none;
+      z-index: 9998;
+      transform: translate(-50%, -50%);
+      transition: width 0.3s, height 0.3s, border-color 0.3s;
+    }
+
+    /* ===== NAVBAR ===== */
+    nav {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      z-index: 100;
+      padding: 18px 48px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-bottom: 1px solid var(--border);
+      background: rgba(10,10,15,0.85);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+    }
+
+    .logo {
+      font-family: 'Syne', sans-serif;
+      font-weight: 800;
+      font-size: 22px;
+      letter-spacing: -0.5px;
+      color: var(--text);
+      text-decoration: none;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .logo-dot {
+      width: 8px; height: 8px;
+      background: var(--accent);
+      border-radius: 50%;
+      flex-shrink: 0;
+      animation: pulse 2s ease-in-out infinite;
+    }
+    @keyframes pulse {
+      0%, 100% { box-shadow: 0 0 0 0 rgba(0,229,160,0.5); }
+      50%       { box-shadow: 0 0 0 6px rgba(0,229,160,0); }
+    }
+
+    .nav-right { display: flex; align-items: center; gap: 8px; }
+
+    .nav-link {
+      color: var(--muted);
+      text-decoration: none;
+      font-size: 14px;
+      padding: 8px 16px;
+      border-radius: 4px;
+      letter-spacing: 0.02em;
+      transition: color 0.2s, background 0.2s;
+    }
+    .nav-link:hover { color: var(--text); background: rgba(255,255,255,0.04); }
+
+    .nav-link.teach {
+      font-family: 'DM Mono', monospace;
+      font-size: 13px;
+      color: var(--accent);
+      border: 1px solid rgba(0,229,160,0.3);
+      background: rgba(0,229,160,0.06);
+    }
+    .nav-link.teach:hover {
+      background: var(--accent);
+      color: #000;
+      border-color: var(--accent);
+      box-shadow: 0 0 20px rgba(0,229,160,0.25);
+    }
+
+    .nav-link.logout {
+      color: #ff7070;
+      border: 1px solid rgba(255,112,112,0.2);
+    }
+    .nav-link.logout:hover {
+      background: rgba(255,112,112,0.08);
+      color: #ff9090;
+      border-color: rgba(255,112,112,0.35);
+    }
+
+    .hamburger {
+      display: none;
+      flex-direction: column;
+      gap: 5px;
+      background: none;
+      border: none;
+      padding: 4px;
+    }
+    .hamburger span {
+      display: block;
+      width: 22px; height: 2px;
+      background: var(--text);
+      border-radius: 2px;
+      transition: transform 0.3s, opacity 0.3s;
+    }
+    .hamburger.open span:nth-child(1) { transform: translateY(7px) rotate(45deg); }
+    .hamburger.open span:nth-child(2) { opacity: 0; }
+    .hamburger.open span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
+
+    .mobile-menu {
+      display: none;
+      position: fixed;
+      top: 61px; left: 0; right: 0;
+      background: rgba(10,10,15,0.97);
+      backdrop-filter: blur(20px);
+      border-bottom: 1px solid var(--border);
+      z-index: 99;
+      padding: 16px 20px 24px;
+      flex-direction: column;
+      gap: 4px;
+    }
+    .mobile-menu.open { display: flex; }
+    .mobile-menu a {
+      color: var(--muted);
+      text-decoration: none;
+      font-size: 15px;
+      padding: 12px 0;
+      border-bottom: 1px solid var(--border);
+      transition: color 0.2s;
+    }
+    .mobile-menu a:last-child { border-bottom: none; }
+    .mobile-menu a:hover { color: var(--text); }
+    .mobile-menu a.teach { color: var(--accent); }
+    .mobile-menu a.logout { color: #ff7070; }
+
+    /* ===== PAGE ===== */
+    .page-wrapper {
+      position: relative;
+      z-index: 1;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 108px 24px 60px;
+    }
+
+    /* ===== CARD ===== */
+    .card {
+      width: 100%;
+      max-width: 560px;
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 48px;
+      position: relative;
+      overflow: hidden;
+      animation: fadeUp 0.7s cubic-bezier(0.16,1,0.3,1) both;
+    }
+    .card::before {
+      content: '';
+      position: absolute;
+      top: -1px; left: 15%; right: 15%;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, var(--accent), transparent);
+      pointer-events: none;
+    }
+    .card::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(ellipse 70% 40% at 50% 0%, rgba(0,229,160,0.04), transparent);
+      pointer-events: none;
+    }
+
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(24px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    .card-header { margin-bottom: 36px; }
+
+    .card-eyebrow {
+      font-family: 'DM Mono', monospace;
+      font-size: 11px;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 12px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .card-eyebrow::before {
+      content: '';
+      width: 24px; height: 1px;
+      background: var(--accent);
+    }
+
+    .card-title {
+      font-family: 'Syne', sans-serif;
+      font-weight: 800;
+      font-size: 36px;
+      letter-spacing: -0.03em;
+      line-height: 1.05;
+    }
+
+    /* ===== FORM ===== */
+    .field { margin-bottom: 20px; }
+
+    label {
+      display: block;
+      font-family: 'DM Mono', monospace;
+      font-size: 11px;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: 8px;
+    }
+
+    input, textarea, select {
+      width: 100%;
+      padding: 13px 16px;
+      background: rgba(255,255,255,0.04);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      color: var(--text);
+      font-family: 'DM Sans', sans-serif;
+      font-size: max(16px, 15px);
+      font-weight: 300;
+      outline: none;
+      transition: border-color 0.2s, background 0.2s, box-shadow 0.2s;
+      appearance: none;
+      -webkit-appearance: none;
+    }
+
+    textarea { resize: none; }
+
+    input::placeholder,
+    textarea::placeholder { color: var(--muted); }
+
+    input:focus, textarea:focus, select:focus {
+      border-color: var(--accent);
+      background: rgba(0,229,160,0.05);
+      box-shadow: 0 0 0 3px rgba(0,229,160,0.08);
+    }
+
+    /* Validation states */
+    input.invalid, textarea.invalid, select.invalid {
+      border-color: rgba(255,80,80,0.5);
+      background: rgba(255,80,80,0.04);
+    }
+    .field-error {
+      font-family: 'DM Mono', monospace;
+      font-size: 10px;
+      letter-spacing: 0.05em;
+      color: #ff9090;
+      margin-top: 6px;
+      display: none;
+    }
+    .field-error.visible { display: block; }
+
+    /* Select arrow */
+    .select-wrap { position: relative; }
+    .select-wrap::after {
+      content: '';
+      position: absolute;
+      right: 16px; top: 50%;
+      transform: translateY(-50%);
+      width: 0; height: 0;
+      border-left: 5px solid transparent;
+      border-right: 5px solid transparent;
+      border-top: 5px solid var(--muted);
+      pointer-events: none;
+    }
+    select option { background: var(--card); color: var(--text); }
+
+    /* ===== BUTTONS ===== */
+    .buttons {
+      display: flex;
+      gap: 12px;
+      margin-top: 28px;
+    }
+
+    .btn {
+      flex: 1;
+      padding: 14px 20px;
+      border: none;
+      border-radius: 6px;
+      font-family: 'Syne', sans-serif;
+      font-size: 15px;
+      font-weight: 700;
+      letter-spacing: 0.02em;
+      text-decoration: none;
+      text-align: center;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      transition: transform 0.2s, box-shadow 0.3s, background 0.2s, border-color 0.2s, color 0.2s;
+      -webkit-tap-highlight-color: transparent;
+      position: relative;
+      z-index: 2;
+    }
+    .btn:active { transform: scale(0.97); }
+
+    .btn-primary {
+      background: var(--accent);
+      color: #000;
+    }
+    .btn-primary svg { transition: transform 0.2s; }
+    .btn-primary:hover {
+      box-shadow: 0 0 32px rgba(0,229,160,0.35);
+      transform: translateY(-1px);
+    }
+    .btn-primary:hover svg { transform: translateX(4px); }
+
+    .btn-secondary {
+      background: transparent;
+      border: 1px solid var(--border);
+      color: var(--muted);
+      font-family: 'DM Mono', monospace;
+      font-size: 13px;
+    }
+    .btn-secondary:hover { border-color: rgba(255,255,255,0.2); color: var(--text); }
+
+    /* ============================================================
+       RESPONSIVE
+    ============================================================ */
+
+    @media (max-width: 1024px) {
+      nav { padding: 18px 28px; }
+      .nav-links-desktop { display: none; }
+      .hamburger { display: flex; }
+    }
+
+    @media (max-width: 640px) {
+      html, body, a, button, input, textarea, select, [role="button"] { cursor: auto !important; }
+      .cursor, .cursor-ring { display: none; }
+
+      nav { padding: 16px 20px; }
+      .logo { font-size: 18px; }
+      .mobile-menu { top: 57px; }
+
+      .page-wrapper { padding: 84px 16px 40px; align-items: flex-start; }
+
+      .card { padding: 32px 24px; border-radius: 10px; }
+      .card-header { margin-bottom: 28px; }
+      .card-eyebrow { font-size: 10px; }
+      .card-title { font-size: 28px; }
+
+      .field { margin-bottom: 16px; }
+      label { font-size: 10px; margin-bottom: 6px; }
+      input, textarea, select { padding: 12px 14px; }
+
+      .buttons { flex-direction: column; gap: 10px; margin-top: 24px; }
+      .btn { font-size: 14px; padding: 14px 16px; }
+    }
+  </style>
 </head>
-
 <body>
 
-<%- include("../includes/navbar") %>
+  <div class="cursor" id="cursor"></div>
+  <div class="cursor-ring" id="cursorRing"></div>
 
-<div class="container mt-5">
+  <div class="blob blob-1"></div>
+  <div class="blob blob-2"></div>
 
-<div class="row justify-content-center">
+  <!-- Navbar -->
+  <nav>
+    <a href="/listings" class="logo">
+      <span class="logo-dot"></span>
+      SkillConnect
+    </a>
+    <div class="nav-right nav-links-desktop">
+      <a href="/listings" class="nav-link">Listings</a>
+      <a href="/listings/new" class="nav-link teach">Teach a Skill</a>
+      <a href="/logout" class="nav-link logout">Logout</a>
+    </div>
+    <button class="hamburger" id="hamburger" aria-label="Toggle menu">
+      <span></span><span></span><span></span>
+    </button>
+  </nav>
 
-<div class="col-md-6">
+  <!-- Mobile Menu -->
+  <div class="mobile-menu" id="mobileMenu">
+    <a href="/listings">Listings</a>
+    <a href="/listings/new" class="teach">Teach a Skill</a>
+    <a href="/logout" class="logout">Logout</a>
+  </div>
 
-<div class="card shadow">
+  <div class="page-wrapper">
+    <div class="card">
 
-<div class="card-body">
+      <div class="card-header">
+        <div class="card-eyebrow">Update your listing</div>
+        <h2 class="card-title">Edit tutor<br>listing</h2>
+      </div>
 
-<h3 class="card-title mb-4 text-center">
-Edit Tutor Listing
-</h3>
+      <form action="/listings/<%= listing._id %>?_method=PUT" method="POST" id="editForm" novalidate>
 
-<form action="/listings/<%= listing._id %>?_method=PUT" method="POST" class="needs-validation" novalidate>
+        <div class="field">
+          <label for="name">Name</label>
+          <input
+            type="text"
+            id="name"
+            name="name"
+            value="<%= listing.name %>"
+            placeholder="Enter your name"
+            autocomplete="name"
+            required
+          />
+          <span class="field-error" id="nameErr">Please enter your name.</span>
+        </div>
 
-<div class="mb-3">
+        <div class="field">
+          <label for="skill">Skill</label>
+          <input
+            type="text"
+            id="skill"
+            name="skill"
+            value="<%= listing.skill %>"
+            placeholder="e.g. React, Python, UI/UX"
+            required
+          />
+          <span class="field-error" id="skillErr">Please enter a skill.</span>
+        </div>
 
-<label class="form-label">Name</label>
+        <div class="field">
+          <label for="description">Description</label>
+          <textarea
+            id="description"
+            name="description"
+            rows="3"
+            placeholder="Describe what you will teach"
+            required
+          ><%= listing.description %></textarea>
+          <span class="field-error" id="descErr">Please enter a description.</span>
+        </div>
 
-<input 
-type="text"
-name="name"
-class="form-control"
-value="<%= listing.name %>"
-required
->
+        <div class="field">
+          <label for="level">Level</label>
+          <div class="select-wrap">
+            <select id="level" name="level" required>
+              <option value="" disabled <%= !listing.level ? 'selected' : '' %>>Select Level</option>
+              <option value="Beginner"     <%= listing.level === 'Beginner'     ? 'selected' : '' %>>Beginner</option>
+              <option value="Intermediate" <%= listing.level === 'Intermediate' ? 'selected' : '' %>>Intermediate</option>
+              <option value="Advanced"     <%= listing.level === 'Advanced'     ? 'selected' : '' %>>Advanced</option>
+            </select>
+          </div>
+          <span class="field-error" id="levelErr">Please select a level.</span>
+        </div>
 
-<div class="invalid-feedback">
-Please enter your name.
-</div>
+        <div class="buttons">
+          <button type="submit" class="btn btn-primary">
+            Save Changes
+            <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+              <path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </button>
+          <a href="/listings/<%= listing._id %>" class="btn btn-secondary">← Cancel</a>
+        </div>
 
-</div>
+      </form>
 
+    </div>
+  </div>
 
-<div class="mb-3">
+  <script>
+    // Cursor
+    const cursor = document.getElementById('cursor');
+    const ring = document.getElementById('cursorRing');
+    let mx = 0, my = 0, rx = 0, ry = 0;
 
-<label class="form-label">Skill</label>
+    document.addEventListener('mousemove', e => {
+      mx = e.clientX; my = e.clientY;
+      cursor.style.left = mx + 'px';
+      cursor.style.top = my + 'px';
+    });
 
-<input 
-type="text"
-name="skill"
-class="form-control"
-value="<%= listing.skill %>"
-required
->
+    (function animateRing() {
+      rx += (mx - rx) * 0.12;
+      ry += (my - ry) * 0.12;
+      ring.style.left = rx + 'px';
+      ring.style.top = ry + 'px';
+      requestAnimationFrame(animateRing);
+    })();
 
-<div class="invalid-feedback">
-Please enter a skill.
-</div>
+    document.querySelectorAll('a, button, input, textarea, select').forEach(el => {
+      el.addEventListener('mouseenter', () => {
+        cursor.style.width = '20px'; cursor.style.height = '20px';
+        ring.style.width = '52px'; ring.style.height = '52px';
+        ring.style.borderColor = 'rgba(0,229,160,0.6)';
+      });
+      el.addEventListener('mouseleave', () => {
+        cursor.style.width = '10px'; cursor.style.height = '10px';
+        ring.style.width = '36px'; ring.style.height = '36px';
+        ring.style.borderColor = 'rgba(0,229,160,0.4)';
+      });
+    });
 
-</div>
+    // Hamburger
+    const hamburger = document.getElementById('hamburger');
+    const mobileMenu = document.getElementById('mobileMenu');
+    hamburger.addEventListener('click', () => {
+      hamburger.classList.toggle('open');
+      mobileMenu.classList.toggle('open');
+    });
+    mobileMenu.querySelectorAll('a').forEach(a => {
+      a.addEventListener('click', () => {
+        hamburger.classList.remove('open');
+        mobileMenu.classList.remove('open');
+      });
+    });
 
+    // Form validation (replaces Bootstrap needs-validation)
+    const form = document.getElementById('editForm');
+    const fields = [
+      { el: document.getElementById('name'),        err: document.getElementById('nameErr') },
+      { el: document.getElementById('skill'),       err: document.getElementById('skillErr') },
+      { el: document.getElementById('description'), err: document.getElementById('descErr') },
+      { el: document.getElementById('level'),       err: document.getElementById('levelErr') },
+    ];
 
-<div class="mb-3">
+    form.addEventListener('submit', e => {
+      let valid = true;
+      fields.forEach(({ el, err }) => {
+        if (!el.value.trim()) {
+          el.classList.add('invalid');
+          err.classList.add('visible');
+          valid = false;
+        } else {
+          el.classList.remove('invalid');
+          err.classList.remove('visible');
+        }
+      });
+      if (!valid) e.preventDefault();
+    });
 
-<label class="form-label">Description</label>
-
-<textarea 
-name="description"
-class="form-control"
-rows="3"
-required
-><%= listing.description %></textarea>
-
-<div class="invalid-feedback">
-Please enter a description.
-</div>
-
-</div>
-
-
-<div class="mb-3">
-
-<label class="form-label">Level</label>
-
-<select name="level" class="form-select" required>
-
-<option value="">Select Level</option>
-
-<option value="Beginner" <%= listing.level === "Beginner" ? "selected" : "" %>>
-Beginner
-</option>
-
-<option value="Intermediate" <%= listing.level === "Intermediate" ? "selected" : "" %>>
-Intermediate
-</option>
-
-<option value="Advanced" <%= listing.level === "Advanced" ? "selected" : "" %>>
-Advanced
-</option>
-
-</select>
-
-<div class="invalid-feedback">
-Please select a level.
-</div>
-
-</div>
-
-
-<div class="d-flex gap-2">
-
-<button class="btn btn-primary">
-Update Listing
-</button>
-
-<a href="/listings/<%= listing._id %>" class="btn btn-secondary">
-Cancel
-</a>
-
-</div>
-
-</form>
-
-</div>
-
-</div>
-
-</div>
-
-</div>
-
-</div>
-
-
-<script>
-
-(() => {
-'use strict'
-
-const forms = document.querySelectorAll('.needs-validation')
-
-Array.from(forms).forEach(form => {
-form.addEventListener('submit', event => {
-
-if (!form.checkValidity()) {
-event.preventDefault()
-event.stopPropagation()
-}
-
-form.classList.add('was-validated')
-
-}, false)
-})
-})()
-
-</script>
+    // Clear error on input
+    fields.forEach(({ el, err }) => {
+      el.addEventListener('input', () => {
+        if (el.value.trim()) {
+          el.classList.remove('invalid');
+          err.classList.remove('visible');
+        }
+      });
+    });
+  </script>
 
 </body>
-
 </html>

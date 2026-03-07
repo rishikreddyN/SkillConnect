@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -30,7 +31,7 @@
       cursor: none;
     }
 
-    /* Custom cursor */
+    /* Custom cursor — hidden on touch devices */
     .cursor {
       width: 10px; height: 10px;
       background: var(--accent);
@@ -40,19 +41,19 @@
       pointer-events: none;
       z-index: 9999;
       transform: translate(-50%, -50%);
-      transition: transform 0.1s ease, width 0.3s ease, height 0.3s ease, background 0.3s ease;
+      transition: width 0.3s ease, height 0.3s ease, background 0.3s ease;
       mix-blend-mode: screen;
     }
     .cursor-ring {
       width: 36px; height: 36px;
-      border: 1px solid rgba(0, 229, 160, 0.4);
+      border: 1px solid rgba(0,229,160,0.4);
       border-radius: 50%;
       position: fixed;
       top: 0; left: 0;
       pointer-events: none;
       z-index: 9998;
       transform: translate(-50%, -50%);
-      transition: transform 0.18s ease, width 0.3s ease, height 0.3s ease, border-color 0.3s ease;
+      transition: width 0.3s ease, height 0.3s ease, border-color 0.3s ease;
     }
 
     /* Background grid */
@@ -98,17 +99,17 @@
       50% { transform: translate(50px, -40px) scale(1.08); }
     }
 
-    /* Navbar */
+    /* ===== NAVBAR ===== */
     nav {
       position: fixed;
       top: 0; left: 0; right: 0;
       z-index: 100;
-      padding: 20px 48px;
+      padding: 18px 48px;
       display: flex;
       align-items: center;
       justify-content: space-between;
       border-bottom: 1px solid var(--border);
-      background: rgba(10,10,15,0.7);
+      background: rgba(10,10,15,0.85);
       backdrop-filter: blur(20px);
       -webkit-backdrop-filter: blur(20px);
     }
@@ -121,6 +122,8 @@
       display: flex;
       align-items: center;
       gap: 8px;
+      text-decoration: none;
+      color: var(--text);
     }
     .logo-dot {
       width: 8px; height: 8px;
@@ -128,6 +131,7 @@
       border-radius: 50%;
       display: inline-block;
       animation: pulse 2s ease-in-out infinite;
+      flex-shrink: 0;
     }
     @keyframes pulse {
       0%, 100% { box-shadow: 0 0 0 0 rgba(0,229,160,0.5); }
@@ -148,6 +152,7 @@
       transition: color 0.2s;
     }
     .nav-link:hover { color: var(--text); }
+    .nav-links-desktop { display: flex; gap: 32px; }
 
     .nav-cta {
       padding: 9px 20px;
@@ -161,6 +166,7 @@
       letter-spacing: 0.03em;
       text-decoration: none;
       transition: background 0.25s, color 0.25s, box-shadow 0.25s;
+      white-space: nowrap;
     }
     .nav-cta:hover {
       background: var(--accent);
@@ -168,7 +174,65 @@
       box-shadow: 0 0 24px rgba(0,229,160,0.3);
     }
 
-    /* Hero */
+    /* Hamburger */
+    .hamburger {
+      display: none;
+      flex-direction: column;
+      gap: 5px;
+      cursor: pointer;
+      padding: 4px;
+      background: none;
+      border: none;
+    }
+    .hamburger span {
+      display: block;
+      width: 22px; height: 2px;
+      background: var(--text);
+      border-radius: 2px;
+      transition: transform 0.3s, opacity 0.3s;
+    }
+    .hamburger.open span:nth-child(1) { transform: translateY(7px) rotate(45deg); }
+    .hamburger.open span:nth-child(2) { opacity: 0; }
+    .hamburger.open span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
+
+    /* Mobile menu */
+    .mobile-menu {
+      display: none;
+      position: fixed;
+      top: 61px; left: 0; right: 0;
+      background: rgba(10,10,15,0.97);
+      backdrop-filter: blur(20px);
+      border-bottom: 1px solid var(--border);
+      z-index: 99;
+      padding: 24px 24px 28px;
+      flex-direction: column;
+      gap: 4px;
+      transform: translateY(-10px);
+      opacity: 0;
+      transition: transform 0.3s ease, opacity 0.3s ease;
+    }
+    .mobile-menu.open {
+      display: flex;
+      transform: translateY(0);
+      opacity: 1;
+    }
+    .mobile-menu a {
+      color: var(--muted);
+      text-decoration: none;
+      font-size: 16px;
+      padding: 12px 0;
+      border-bottom: 1px solid var(--border);
+      transition: color 0.2s;
+    }
+    .mobile-menu a:last-child { border-bottom: none; }
+    .mobile-menu a:hover { color: var(--text); }
+    .mobile-menu .nav-cta {
+      margin-top: 12px;
+      text-align: center;
+      padding: 13px;
+    }
+
+    /* ===== HERO ===== */
     .hero {
       position: relative;
       z-index: 1;
@@ -197,12 +261,13 @@
       content: '';
       width: 32px; height: 1px;
       background: var(--accent);
+      flex-shrink: 0;
     }
 
     .hero-title {
       font-family: 'Syne', sans-serif;
       font-weight: 800;
-      font-size: clamp(52px, 8vw, 100px);
+      font-size: clamp(48px, 8vw, 100px);
       line-height: 0.95;
       letter-spacing: -0.03em;
       max-width: 900px;
@@ -214,14 +279,13 @@
       font-style: normal;
       color: transparent;
       -webkit-text-stroke: 1px rgba(255,255,255,0.3);
-      position: relative;
     }
-    .hero-title .accent-word {
+    .accent-word {
       color: var(--accent);
       position: relative;
       display: inline-block;
     }
-    .hero-title .accent-word::after {
+    .accent-word::after {
       content: '';
       position: absolute;
       bottom: 4px; left: 0; right: 0;
@@ -244,7 +308,8 @@
     .hero-actions {
       display: flex;
       align-items: center;
-      gap: 20px;
+      gap: 16px;
+      flex-wrap: wrap;
       opacity: 0;
       animation: fadeUp 0.9s ease 0.65s forwards;
     }
@@ -286,24 +351,21 @@
     }
     .btn-ghost:hover { border-color: rgba(255,255,255,0.2); color: var(--text); }
 
-    /* Stats strip */
+    /* ===== STATS STRIP ===== */
     .stats-strip {
       position: relative;
       z-index: 1;
-      margin: 0 48px;
-      padding: 32px 48px;
+      margin: 0 48px 100px;
       border: 1px solid var(--border);
       border-radius: 8px;
       background: var(--card);
       display: grid;
       grid-template-columns: repeat(4, 1fr);
-      gap: 0;
-      margin-bottom: 100px;
       opacity: 0;
       animation: fadeUp 0.9s ease 0.8s forwards;
     }
     .stat {
-      padding: 16px 32px;
+      padding: 28px 32px;
       border-right: 1px solid var(--border);
     }
     .stat:last-child { border-right: none; }
@@ -322,7 +384,46 @@
       font-weight: 300;
     }
 
-    /* Skills section */
+    /* ===== MARQUEE ===== */
+    .topics-marquee {
+      position: relative;
+      z-index: 1;
+      padding: 36px 0;
+      overflow: hidden;
+      border-top: 1px solid var(--border);
+      border-bottom: 1px solid var(--border);
+      background: var(--surface);
+    }
+    .marquee-track {
+      display: flex;
+      width: max-content;
+      animation: marquee 30s linear infinite;
+    }
+    .marquee-item {
+      display: flex;
+      align-items: center;
+      gap: 24px;
+      padding: 0 40px;
+      font-family: 'Syne', sans-serif;
+      font-weight: 700;
+      font-size: 13px;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      color: var(--muted);
+      white-space: nowrap;
+    }
+    .marquee-dot {
+      width: 5px; height: 5px;
+      border-radius: 50%;
+      background: var(--accent);
+      flex-shrink: 0;
+    }
+    @keyframes marquee {
+      from { transform: translateX(0); }
+      to { transform: translateX(-50%); }
+    }
+
+    /* ===== TUTORS SECTION ===== */
     .section {
       position: relative;
       z-index: 1;
@@ -334,6 +435,7 @@
       justify-content: space-between;
       align-items: flex-end;
       margin-bottom: 48px;
+      gap: 16px;
     }
     .section-label {
       font-family: 'DM Mono', monospace;
@@ -386,8 +488,10 @@
       align-items: center;
       justify-content: space-between;
       margin-bottom: 20px;
+      gap: 8px;
     }
-    .tutor-info { display: flex; align-items: center; gap: 14px; }
+    .tutor-info { display: flex; align-items: center; gap: 14px; min-width: 0; }
+
     .avatar {
       width: 48px; height: 48px;
       border-radius: 50%;
@@ -397,44 +501,49 @@
       justify-content: center;
       font-family: 'Syne', sans-serif;
       font-weight: 800;
-      font-size: 18px;
+      font-size: 16px;
       color: #fff;
       flex-shrink: 0;
     }
     .avatar.purple { background: linear-gradient(135deg, #7b61ff, #a78bfa); }
     .avatar.orange { background: linear-gradient(135deg, #ff6b35, #ffa45b); }
-    .avatar.blue { background: linear-gradient(135deg, #0ea5e9, #38bdf8); }
-    .avatar.pink { background: linear-gradient(135deg, #ec4899, #f472b6); }
+    .avatar.blue   { background: linear-gradient(135deg, #0ea5e9, #38bdf8); }
+    .avatar.pink   { background: linear-gradient(135deg, #ec4899, #f472b6); }
     .avatar.yellow { background: linear-gradient(135deg, #f59e0b, #fcd34d); }
 
     .tutor-name {
       font-family: 'Syne', sans-serif;
       font-weight: 700;
-      font-size: 16px;
+      font-size: 15px;
       margin-bottom: 2px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
     }
     .tutor-role {
       font-size: 12px;
       color: var(--muted);
       font-weight: 300;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
     }
     .rating {
       font-family: 'DM Mono', monospace;
       font-size: 13px;
       color: var(--accent);
-      display: flex;
-      align-items: center;
-      gap: 4px;
+      white-space: nowrap;
+      flex-shrink: 0;
     }
 
     .tutor-skills {
       display: flex;
       flex-wrap: wrap;
-      gap: 8px;
+      gap: 6px;
       margin-bottom: 20px;
     }
     .skill-tag {
-      padding: 4px 12px;
+      padding: 4px 10px;
       border-radius: 3px;
       font-family: 'DM Mono', monospace;
       font-size: 11px;
@@ -460,15 +569,11 @@
       justify-content: space-between;
       padding-top: 20px;
       border-top: 1px solid var(--border);
+      gap: 8px;
     }
-    .students-count {
-      font-size: 13px;
-      color: var(--muted);
-    }
-    .students-count strong {
-      color: var(--text);
-      font-weight: 500;
-    }
+    .students-count { font-size: 13px; color: var(--muted); }
+    .students-count strong { color: var(--text); font-weight: 500; }
+
     .card-link {
       font-family: 'DM Mono', monospace;
       font-size: 12px;
@@ -479,50 +584,11 @@
       align-items: center;
       gap: 6px;
       transition: gap 0.2s;
+      white-space: nowrap;
     }
     .card-link:hover { gap: 10px; }
 
-    /* Topics strip */
-    .topics-marquee {
-      position: relative;
-      z-index: 1;
-      padding: 40px 0;
-      overflow: hidden;
-      border-top: 1px solid var(--border);
-      border-bottom: 1px solid var(--border);
-      background: var(--surface);
-    }
-    .marquee-track {
-      display: flex;
-      gap: 0;
-      animation: marquee 30s linear infinite;
-      width: max-content;
-    }
-    .marquee-item {
-      display: flex;
-      align-items: center;
-      gap: 24px;
-      padding: 0 40px;
-      font-family: 'Syne', sans-serif;
-      font-weight: 700;
-      font-size: 14px;
-      letter-spacing: 0.05em;
-      text-transform: uppercase;
-      color: var(--muted);
-      white-space: nowrap;
-    }
-    .marquee-dot {
-      width: 5px; height: 5px;
-      border-radius: 50%;
-      background: var(--accent);
-      flex-shrink: 0;
-    }
-    @keyframes marquee {
-      from { transform: translateX(0); }
-      to { transform: translateX(-50%); }
-    }
-
-    /* CTA section */
+    /* ===== CTA ===== */
     .cta-section {
       position: relative;
       z-index: 1;
@@ -554,7 +620,7 @@
     .cta-title {
       font-family: 'Syne', sans-serif;
       font-weight: 800;
-      font-size: clamp(36px, 5vw, 60px);
+      font-size: clamp(32px, 5vw, 60px);
       letter-spacing: -0.03em;
       margin-bottom: 20px;
       line-height: 1;
@@ -567,7 +633,7 @@
       line-height: 1.6;
     }
 
-    /* Footer */
+    /* ===== FOOTER ===== */
     footer {
       position: relative;
       z-index: 1;
@@ -576,6 +642,8 @@
       display: flex;
       align-items: center;
       justify-content: space-between;
+      gap: 16px;
+      flex-wrap: wrap;
     }
     .footer-logo {
       font-family: 'Syne', sans-serif;
@@ -590,38 +658,168 @@
 
     @keyframes fadeUp {
       from { opacity: 0; transform: translateY(24px); }
-      to { opacity: 1; transform: translateY(0); }
+      to   { opacity: 1; transform: translateY(0); }
     }
 
-    /* Scrollbar */
     ::-webkit-scrollbar { width: 4px; }
     ::-webkit-scrollbar-track { background: var(--bg); }
     ::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.1); border-radius: 2px; }
+
+    /* ============================================================
+       RESPONSIVE BREAKPOINTS
+    ============================================================ */
+
+    /* Tablet — 2 column grid */
+    @media (max-width: 1024px) {
+      nav { padding: 18px 28px; }
+
+      .nav-links-desktop { display: none; }
+      .hamburger { display: flex; }
+
+      .hero { padding: 0 28px; padding-top: 110px; }
+
+      .stats-strip {
+        margin: 0 28px 80px;
+        grid-template-columns: repeat(2, 1fr);
+      }
+      .stat:nth-child(2) { border-right: none; }
+      .stat:nth-child(3) { border-top: 1px solid var(--border); border-right: 1px solid var(--border); }
+      .stat:nth-child(4) { border-top: 1px solid var(--border); }
+
+      .section { padding: 60px 28px; }
+
+      .tutor-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+
+      .cta-section { padding: 80px 28px; }
+      .cta-box { padding: 60px 40px; }
+
+      footer { padding: 24px 28px; }
+    }
+
+    /* Mobile — 1 column, full rework */
+    @media (max-width: 640px) {
+      body { cursor: auto; }
+      .cursor, .cursor-ring { display: none; }
+
+      nav { padding: 16px 20px; }
+
+      .logo { font-size: 19px; }
+
+      .hero {
+        padding: 0 20px;
+        padding-top: 100px;
+        min-height: auto;
+        padding-bottom: 60px;
+      }
+
+      .hero-label { font-size: 11px; margin-bottom: 20px; }
+
+      .hero-title {
+        font-size: clamp(40px, 12vw, 56px);
+        line-height: 1;
+        margin-bottom: 24px;
+      }
+
+      .hero-body {
+        font-size: 15px;
+        margin-bottom: 36px;
+      }
+
+      .hero-actions {
+        flex-direction: column;
+        align-items: stretch;
+      }
+      .btn-primary, .btn-ghost {
+        justify-content: center;
+        padding: 14px 20px;
+        font-size: 14px;
+      }
+
+      /* Stats: 2x2 on mobile */
+      .stats-strip {
+        margin: 0 20px 60px;
+        grid-template-columns: repeat(2, 1fr);
+      }
+      .stat { padding: 20px 18px; }
+      .stat-value { font-size: 28px; }
+      .stat:nth-child(2) { border-right: none; }
+      .stat:nth-child(3) { border-top: 1px solid var(--border); border-right: 1px solid var(--border); }
+      .stat:nth-child(4) { border-top: 1px solid var(--border); }
+
+      /* 1 column cards */
+      .section { padding: 48px 20px; }
+
+      .section-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 16px;
+        margin-bottom: 28px;
+      }
+      .section-title { font-size: 30px; }
+
+      .tutor-grid {
+        grid-template-columns: 1fr;
+        gap: 12px;
+      }
+
+      .tutor-card { padding: 20px; }
+
+      .avatar { width: 42px; height: 42px; font-size: 14px; }
+      .tutor-name { font-size: 14px; }
+
+      .cta-section { padding: 60px 20px; }
+      .cta-box { padding: 40px 24px; }
+      .cta-sub { font-size: 15px; }
+      .cta-box .btn-primary { width: 100%; justify-content: center; }
+
+      footer {
+        padding: 20px;
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+        gap: 8px;
+      }
+
+      .mobile-menu { top: 57px; }
+    }
   </style>
 </head>
 <body>
 
-  <!-- Custom cursor -->
   <div class="cursor" id="cursor"></div>
   <div class="cursor-ring" id="cursorRing"></div>
 
-  <!-- Background blobs -->
   <div class="blob blob-1"></div>
   <div class="blob blob-2"></div>
 
   <!-- Navbar -->
   <nav>
-    <div class="logo">
+    <a href="/" class="logo">
       <span class="logo-dot"></span>
       SkillConnect
-    </div>
+    </a>
     <div class="nav-right">
-      <a class="nav-link" href="#">Explore</a>
-      <a class="nav-link" href="#">Tutors</a>
-      <a class="nav-link" href="#">Community</a>
+      <div class="nav-links-desktop">
+        <a class="nav-link" href="#">Explore</a>
+        <a class="nav-link" href="#">Tutors</a>
+        <a class="nav-link" href="#">Community</a>
+      </div>
       <a class="nav-cta" href="/login">Get Started</a>
+      <button class="hamburger" id="hamburger" aria-label="Toggle menu">
+        <span></span><span></span><span></span>
+      </button>
     </div>
   </nav>
+
+  <!-- Mobile Menu -->
+  <div class="mobile-menu" id="mobileMenu">
+    <a href="#">Explore</a>
+    <a href="#">Tutors</a>
+    <a href="#">Community</a>
+    <a href="/login" class="nav-cta">Get Started</a>
+  </div>
 
   <!-- Hero -->
   <section class="hero">
@@ -651,24 +849,12 @@
     </div>
   </section>
 
-  <!-- Stats strip -->
+  <!-- Stats -->
   <div class="stats-strip">
-    <div class="stat">
-      <div class="stat-value">4<span>k</span>+</div>
-      <div class="stat-label">Active Tutors</div>
-    </div>
-    <div class="stat">
-      <div class="stat-value">28<span>k</span></div>
-      <div class="stat-label">Developers Learning</div>
-    </div>
-    <div class="stat">
-      <div class="stat-value">120<span>+</span></div>
-      <div class="stat-label">Technical Topics</div>
-    </div>
-    <div class="stat">
-      <div class="stat-value">4.9<span>★</span></div>
-      <div class="stat-label">Average Rating</div>
-    </div>
+    <div class="stat"><div class="stat-value">4<span>k</span>+</div><div class="stat-label">Active Tutors</div></div>
+    <div class="stat"><div class="stat-value">28<span>k</span></div><div class="stat-label">Developers Learning</div></div>
+    <div class="stat"><div class="stat-value">120<span>+</span></div><div class="stat-label">Technical Topics</div></div>
+    <div class="stat"><div class="stat-value">4.9<span>★</span></div><div class="stat-label">Average Rating</div></div>
   </div>
 
   <!-- Marquee -->
@@ -676,7 +862,7 @@
     <div class="marquee-track" id="marqueeTrack"></div>
   </div>
 
-  <!-- Tutors section -->
+  <!-- Tutors -->
   <section class="section" id="tutors">
     <div class="section-header">
       <div>
@@ -844,14 +1030,12 @@
 
   <!-- Footer -->
   <footer>
-    <div class="footer-logo">
-      <span style="color:var(--accent)">●</span> SkillConnect
-    </div>
+    <div class="footer-logo"><span style="color:var(--accent)">●</span> SkillConnect</div>
     <div class="footer-copy">© 2026 SkillConnect. All rights reserved.</div>
   </footer>
 
   <script>
-    // Custom cursor
+    // Cursor (desktop only)
     const cursor = document.getElementById('cursor');
     const ring = document.getElementById('cursorRing');
     let mx = 0, my = 0, rx = 0, ry = 0;
@@ -862,29 +1046,41 @@
       cursor.style.top = my + 'px';
     });
 
-    function animateRing() {
+    (function animateRing() {
       rx += (mx - rx) * 0.12;
       ry += (my - ry) * 0.12;
       ring.style.left = rx + 'px';
       ring.style.top = ry + 'px';
       requestAnimationFrame(animateRing);
-    }
-    animateRing();
+    })();
 
     document.querySelectorAll('a, button').forEach(el => {
       el.addEventListener('mouseenter', () => {
-        cursor.style.width = '20px';
-        cursor.style.height = '20px';
-        ring.style.width = '52px';
-        ring.style.height = '52px';
+        cursor.style.width = '20px'; cursor.style.height = '20px';
+        ring.style.width = '52px'; ring.style.height = '52px';
         ring.style.borderColor = 'rgba(0,229,160,0.6)';
       });
       el.addEventListener('mouseleave', () => {
-        cursor.style.width = '10px';
-        cursor.style.height = '10px';
-        ring.style.width = '36px';
-        ring.style.height = '36px';
+        cursor.style.width = '10px'; cursor.style.height = '10px';
+        ring.style.width = '36px'; ring.style.height = '36px';
         ring.style.borderColor = 'rgba(0,229,160,0.4)';
+      });
+    });
+
+    // Hamburger
+    const hamburger = document.getElementById('hamburger');
+    const mobileMenu = document.getElementById('mobileMenu');
+
+    hamburger.addEventListener('click', () => {
+      hamburger.classList.toggle('open');
+      mobileMenu.classList.toggle('open');
+    });
+
+    // Close mobile menu on link click
+    mobileMenu.querySelectorAll('a').forEach(a => {
+      a.addEventListener('click', () => {
+        hamburger.classList.remove('open');
+        mobileMenu.classList.remove('open');
       });
     });
 
@@ -895,8 +1091,7 @@
       'Computer Vision', 'Algorithms', 'TypeScript', 'Cloud Architecture'
     ];
     const track = document.getElementById('marqueeTrack');
-    const doubled = [...topics, ...topics];
-    doubled.forEach(t => {
+    [...topics, ...topics].forEach(t => {
       const item = document.createElement('div');
       item.className = 'marquee-item';
       item.innerHTML = `<span class="marquee-dot"></span>${t}`;

@@ -1,225 +1,617 @@
 <!DOCTYPE html>
-<html>
-
+<html lang="en">
 <head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Create Listing - SkillConnect</title>
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;700;800&family=DM+Mono:wght@400;500&family=DM+Sans:ital,wght@0,300;0,400;1,300&display=swap" rel="stylesheet"/>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
-<title>Create Listing - SkillConnect</title>
+    /* Force custom cursor everywhere */
+    html, body, a, button, input, textarea, select, [role="button"] { cursor: none !important; }
 
-<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;600&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+    :root {
+      --bg:      #0a0a0f;
+      --surface: #12121a;
+      --card:    #16161f;
+      --border:  rgba(255,255,255,0.07);
+      --accent:  #00e5a0;
+      --accent2: #7b61ff;
+      --text:    #f0f0f8;
+      --muted:   #6b6b80;
+    }
 
-<style>
+    html { scroll-behavior: smooth; }
 
-*, *::before, *::after { box-sizing:border-box; margin:0; padding:0; }
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'DM Sans', sans-serif;
+      font-weight: 300;
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
 
-:root{
---bg:#1a1625;
---surface:#221d2e;
---border:rgba(255,255,255,0.08);
---accent:#c8a96e;
---accent-dim:rgba(200,169,110,0.10);
---text:#f0ece4;
---muted:#8a8499;
-}
+    ::-webkit-scrollbar { width: 4px; }
+    ::-webkit-scrollbar-track { background: var(--bg); }
+    ::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.1); border-radius: 2px; }
 
-body{
-font-family:'DM Sans',sans-serif;
-background:var(--bg);
-color:var(--text);
-min-height:100vh;
-}
+    /* Background grid */
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background-image:
+        linear-gradient(rgba(255,255,255,0.025) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255,255,255,0.025) 1px, transparent 1px);
+      background-size: 60px 60px;
+      pointer-events: none;
+      z-index: 0;
+    }
 
-.container{
-max-width:600px;
-margin:80px auto;
-padding:0 20px;
-}
+    /* Blobs */
+    .blob {
+      position: fixed;
+      border-radius: 50%;
+      filter: blur(120px);
+      pointer-events: none;
+      z-index: 0;
+      opacity: 0.15;
+    }
+    .blob-1 {
+      width: 600px; height: 600px;
+      background: var(--accent2);
+      top: -200px; right: -100px;
+      animation: blobFloat1 12s ease-in-out infinite;
+    }
+    .blob-2 {
+      width: 500px; height: 500px;
+      background: var(--accent);
+      bottom: -150px; left: -100px;
+      animation: blobFloat2 15s ease-in-out infinite;
+    }
+    @keyframes blobFloat1 {
+      0%, 100% { transform: translate(0,0) scale(1); }
+      50% { transform: translate(-40px,60px) scale(1.1); }
+    }
+    @keyframes blobFloat2 {
+      0%, 100% { transform: translate(0,0) scale(1); }
+      50% { transform: translate(50px,-40px) scale(1.08); }
+    }
 
-.box{
-background:var(--surface);
-border:1px solid var(--border);
-border-radius:16px;
-padding:40px;
-box-shadow:0 10px 40px rgba(0,0,0,0.35);
-}
+    /* Cursor */
+    .cursor {
+      width: 10px; height: 10px;
+      background: var(--accent);
+      border-radius: 50%;
+      position: fixed; top: 0; left: 0;
+      pointer-events: none;
+      z-index: 9999;
+      transform: translate(-50%, -50%);
+      transition: width 0.3s, height 0.3s;
+      mix-blend-mode: screen;
+    }
+    .cursor-ring {
+      width: 36px; height: 36px;
+      border: 1px solid rgba(0,229,160,0.4);
+      border-radius: 50%;
+      position: fixed; top: 0; left: 0;
+      pointer-events: none;
+      z-index: 9998;
+      transform: translate(-50%, -50%);
+      transition: width 0.3s, height 0.3s, border-color 0.3s;
+    }
 
-h2{
-font-family:'Playfair Display',serif;
-font-weight:500;
-font-size:1.9rem;
-margin-bottom:28px;
-text-align:center;
-}
+    /* ===== NAVBAR ===== */
+    nav {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      z-index: 100;
+      padding: 18px 48px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-bottom: 1px solid var(--border);
+      background: rgba(10,10,15,0.85);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+    }
 
-.field{
-margin-bottom:20px;
-}
+    .logo {
+      font-family: 'Syne', sans-serif;
+      font-weight: 800;
+      font-size: 22px;
+      letter-spacing: -0.5px;
+      color: var(--text);
+      text-decoration: none;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .logo-dot {
+      width: 8px; height: 8px;
+      background: var(--accent);
+      border-radius: 50%;
+      flex-shrink: 0;
+      animation: pulse 2s ease-in-out infinite;
+    }
+    @keyframes pulse {
+      0%, 100% { box-shadow: 0 0 0 0 rgba(0,229,160,0.5); }
+      50%       { box-shadow: 0 0 0 6px rgba(0,229,160,0); }
+    }
 
-label{
-display:block;
-font-size:0.75rem;
-letter-spacing:0.08em;
-text-transform:uppercase;
-color:var(--muted);
-margin-bottom:8px;
-}
+    .nav-right {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
 
-input, textarea, select{
-width:100%;
-padding:12px 14px;
-border-radius:8px;
-border:1px solid var(--border);
-background:rgba(255,255,255,0.04);
-color:var(--text);
-font-family:'DM Sans',sans-serif;
-font-size:0.9rem;
-outline:none;
-transition:0.2s;
-}
+    .nav-link {
+      color: var(--muted);
+      text-decoration: none;
+      font-size: 14px;
+      font-weight: 400;
+      padding: 8px 16px;
+      border-radius: 4px;
+      letter-spacing: 0.02em;
+      transition: color 0.2s, background 0.2s;
+    }
+    .nav-link:hover { color: var(--text); background: rgba(255,255,255,0.04); }
 
-textarea{
-resize:none;
-}
+    .nav-link.teach {
+      font-family: 'DM Mono', monospace;
+      font-size: 13px;
+      color: var(--accent);
+      border: 1px solid rgba(0,229,160,0.3);
+      background: rgba(0,229,160,0.06);
+      letter-spacing: 0.03em;
+    }
+    .nav-link.teach:hover {
+      background: var(--accent);
+      color: #000;
+      border-color: var(--accent);
+      box-shadow: 0 0 20px rgba(0,229,160,0.25);
+    }
 
-input:focus,
-textarea:focus,
-select:focus{
-border-color:var(--accent);
-background:var(--accent-dim);
-box-shadow:0 0 0 3px rgba(200,169,110,0.08);
-}
+    .nav-link.logout {
+      color: #ff7070;
+      border: 1px solid rgba(255,112,112,0.2);
+    }
+    .nav-link.logout:hover {
+      background: rgba(255,112,112,0.08);
+      color: #ff9090;
+      border-color: rgba(255,112,112,0.35);
+    }
 
-.buttons{
-display:flex;
-gap:12px;
-margin-top:10px;
-}
+    /* Hamburger */
+    .hamburger {
+      display: none;
+      flex-direction: column;
+      gap: 5px;
+      background: none;
+      border: none;
+      padding: 4px;
+    }
+    .hamburger span {
+      display: block;
+      width: 22px; height: 2px;
+      background: var(--text);
+      border-radius: 2px;
+      transition: transform 0.3s, opacity 0.3s;
+    }
+    .hamburger.open span:nth-child(1) { transform: translateY(7px) rotate(45deg); }
+    .hamburger.open span:nth-child(2) { opacity: 0; }
+    .hamburger.open span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
 
-.btn{
-flex:1;
-padding:12px;
-border-radius:8px;
-border:none;
-font-size:0.9rem;
-cursor:pointer;
-font-family:'DM Sans',sans-serif;
-letter-spacing:0.04em;
-transition:0.2s;
-text-decoration:none;
-text-align:center;
-}
+    /* Mobile menu */
+    .mobile-menu {
+      display: none;
+      position: fixed;
+      top: 61px; left: 0; right: 0;
+      background: rgba(10,10,15,0.97);
+      backdrop-filter: blur(20px);
+      border-bottom: 1px solid var(--border);
+      z-index: 99;
+      padding: 16px 20px 24px;
+      flex-direction: column;
+      gap: 4px;
+    }
+    .mobile-menu.open { display: flex; }
+    .mobile-menu a {
+      color: var(--muted);
+      text-decoration: none;
+      font-size: 15px;
+      padding: 12px 0;
+      border-bottom: 1px solid var(--border);
+      transition: color 0.2s;
+    }
+    .mobile-menu a:last-child { border-bottom: none; }
+    .mobile-menu a:hover { color: var(--text); }
+    .mobile-menu a.teach { color: var(--accent); }
+    .mobile-menu a.logout { color: #ff7070; }
 
-.btn-primary{
-background:var(--accent);
-color:#1a1625;
-}
+    /* ===== PAGE ===== */
+    .page-wrapper {
+      position: relative;
+      z-index: 1;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 108px 24px 60px;
+    }
 
-.btn-primary:hover{
-box-shadow:0 4px 20px rgba(200,169,110,0.3);
-}
+    /* ===== CARD ===== */
+    .card {
+      width: 100%;
+      max-width: 560px;
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 48px 48px;
+      position: relative;
+      overflow: hidden;
+      animation: fadeUp 0.7s cubic-bezier(0.16,1,0.3,1) both;
+    }
 
-.btn-secondary{
-background:transparent;
-border:1px solid var(--border);
-color:var(--muted);
-}
+    .card::before {
+      content: '';
+      position: absolute;
+      top: -1px; left: 15%; right: 15%;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, var(--accent), transparent);
+      pointer-events: none;
+    }
+    .card::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(ellipse 70% 40% at 50% 0%, rgba(0,229,160,0.04), transparent);
+      pointer-events: none;
+    }
 
-.btn-secondary:hover{
-background:rgba(255,255,255,0.04);
-color:var(--text);
-}
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(24px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
 
-</style>
+    /* Card header */
+    .card-header { margin-bottom: 36px; }
 
+    .card-eyebrow {
+      font-family: 'DM Mono', monospace;
+      font-size: 11px;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 12px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .card-eyebrow::before {
+      content: '';
+      width: 24px; height: 1px;
+      background: var(--accent);
+    }
+
+    .card-title {
+      font-family: 'Syne', sans-serif;
+      font-weight: 800;
+      font-size: 36px;
+      letter-spacing: -0.03em;
+      line-height: 1.05;
+      color: var(--text);
+    }
+
+    /* ===== FORM ===== */
+    .field { margin-bottom: 20px; }
+
+    label {
+      display: block;
+      font-family: 'DM Mono', monospace;
+      font-size: 11px;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: 8px;
+    }
+
+    input, textarea, select {
+      width: 100%;
+      padding: 13px 16px;
+      background: rgba(255,255,255,0.04);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      color: var(--text);
+      font-family: 'DM Sans', sans-serif;
+      font-size: max(16px, 15px);
+      font-weight: 300;
+      outline: none;
+      transition: border-color 0.2s, background 0.2s, box-shadow 0.2s;
+      appearance: none;
+      -webkit-appearance: none;
+    }
+
+    textarea { resize: none; }
+
+    input::placeholder,
+    textarea::placeholder { color: var(--muted); }
+
+    input:focus,
+    textarea:focus,
+    select:focus {
+      border-color: var(--accent);
+      background: rgba(0,229,160,0.05);
+      box-shadow: 0 0 0 3px rgba(0,229,160,0.08);
+    }
+
+    /* Select arrow */
+    .select-wrap {
+      position: relative;
+    }
+    .select-wrap::after {
+      content: '';
+      position: absolute;
+      right: 16px;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 0; height: 0;
+      border-left: 5px solid transparent;
+      border-right: 5px solid transparent;
+      border-top: 5px solid var(--muted);
+      pointer-events: none;
+    }
+
+    /* Option styling */
+    select option {
+      background: var(--card);
+      color: var(--text);
+    }
+
+    /* ===== BUTTONS ===== */
+    .buttons {
+      display: flex;
+      gap: 12px;
+      margin-top: 28px;
+    }
+
+    .btn {
+      flex: 1;
+      padding: 14px 20px;
+      border: none;
+      border-radius: 6px;
+      font-family: 'Syne', sans-serif;
+      font-size: 15px;
+      font-weight: 700;
+      letter-spacing: 0.02em;
+      text-decoration: none;
+      text-align: center;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      transition: transform 0.2s, box-shadow 0.3s, background 0.2s, border-color 0.2s, color 0.2s;
+      -webkit-tap-highlight-color: transparent;
+      position: relative;
+      z-index: 2;
+    }
+    .btn:active { transform: scale(0.97); }
+
+    .btn-primary {
+      background: var(--accent);
+      color: #000;
+    }
+    .btn-primary svg { transition: transform 0.2s; }
+    .btn-primary:hover {
+      box-shadow: 0 0 32px rgba(0,229,160,0.35);
+      transform: translateY(-1px);
+    }
+    .btn-primary:hover svg { transform: translateX(4px); }
+
+    .btn-secondary {
+      background: transparent;
+      border: 1px solid var(--border);
+      color: var(--muted);
+      font-family: 'DM Mono', monospace;
+      font-size: 13px;
+    }
+    .btn-secondary:hover {
+      border-color: rgba(255,255,255,0.2);
+      color: var(--text);
+    }
+
+    /* ============================================================
+       RESPONSIVE
+    ============================================================ */
+
+    @media (max-width: 1024px) {
+      nav { padding: 18px 28px; }
+      .nav-links-desktop { display: none; }
+      .hamburger { display: flex; }
+    }
+
+    @media (max-width: 640px) {
+      html, body, a, button, input, textarea, select, [role="button"] { cursor: auto !important; }
+      .cursor, .cursor-ring { display: none; }
+
+      nav { padding: 16px 20px; }
+      .logo { font-size: 18px; }
+      .mobile-menu { top: 57px; }
+
+      .page-wrapper { padding: 84px 16px 40px; }
+
+      .card { padding: 32px 24px; border-radius: 10px; }
+
+      .card-header { margin-bottom: 28px; }
+      .card-eyebrow { font-size: 10px; }
+      .card-title { font-size: 28px; }
+
+      .field { margin-bottom: 16px; }
+      label { font-size: 10px; margin-bottom: 6px; }
+
+      input, textarea, select { padding: 12px 14px; border-radius: 6px; }
+
+      .buttons {
+        flex-direction: column;
+        gap: 10px;
+        margin-top: 24px;
+      }
+
+      .btn { font-size: 14px; padding: 14px 16px; }
+    }
+  </style>
 </head>
-
 <body>
 
-<%- include("../includes/navbar") %>
+  <div class="cursor" id="cursor"></div>
+  <div class="cursor-ring" id="cursorRing"></div>
 
-<div class="container">
+  <div class="blob blob-1"></div>
+  <div class="blob blob-2"></div>
 
-<div class="box">
+  <!-- Navbar -->
+  <nav>
+    <a href="/listings" class="logo">
+      <span class="logo-dot"></span>
+      SkillConnect
+    </a>
+    <div class="nav-right nav-links-desktop">
+      <a href="/listings" class="nav-link">Listings</a>
+      <a href="/listings/new" class="nav-link teach">Teach a Skill</a>
+      <a href="/logout" class="nav-link logout">Logout</a>
+    </div>
+    <button class="hamburger" id="hamburger" aria-label="Toggle menu">
+      <span></span><span></span><span></span>
+    </button>
+  </nav>
 
-<h2>Create New Tutor Listing</h2>
+  <!-- Mobile Menu -->
+  <div class="mobile-menu" id="mobileMenu">
+    <a href="/listings">Listings</a>
+    <a href="/listings/new" class="teach">Teach a Skill</a>
+    <a href="/logout" class="logout">Logout</a>
+  </div>
 
-<form action="/listings" method="POST">
+  <!-- Page -->
+  <div class="page-wrapper">
+    <div class="card">
 
-<div class="field">
+      <div class="card-header">
+        <div class="card-eyebrow">Share your knowledge</div>
+        <h2 class="card-title">Create a new<br>tutor listing</h2>
+      </div>
 
-<label>Name</label>
+      <form action="/listings" method="POST">
 
-<input 
-type="text"
-name="name"
-placeholder="Enter your name"
-required
->
+        <div class="field">
+          <label for="name">Name</label>
+          <input
+            type="text"
+            id="name"
+            name="name"
+            placeholder="Enter your name"
+            autocomplete="name"
+            required
+          />
+        </div>
 
-</div>
+        <div class="field">
+          <label for="skill">Skill</label>
+          <input
+            type="text"
+            id="skill"
+            name="skill"
+            placeholder="e.g. React, Python, UI/UX"
+            required
+          />
+        </div>
 
+        <div class="field">
+          <label for="description">Description</label>
+          <textarea
+            id="description"
+            name="description"
+            rows="3"
+            placeholder="Describe what you will teach"
+            required
+          ></textarea>
+        </div>
 
-<div class="field">
+        <div class="field">
+          <label for="level">Level</label>
+          <div class="select-wrap">
+            <select id="level" name="level" required>
+              <option value="" disabled selected>Select Level</option>
+              <option value="Beginner">Beginner</option>
+              <option value="Intermediate">Intermediate</option>
+              <option value="Advanced">Advanced</option>
+            </select>
+          </div>
+        </div>
 
-<label>Skill</label>
+        <div class="buttons">
+          <button type="submit" class="btn btn-primary">
+            Start Teaching
+            <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+              <path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </button>
+          <a href="/listings" class="btn btn-secondary">← Back</a>
+        </div>
 
-<input 
-type="text"
-name="skill"
-placeholder="Example: React, Python, UI/UX"
-required
->
+      </form>
 
-</div>
+    </div>
+  </div>
 
+  <script>
+    const cursor = document.getElementById('cursor');
+    const ring = document.getElementById('cursorRing');
+    let mx = 0, my = 0, rx = 0, ry = 0;
 
-<div class="field">
+    document.addEventListener('mousemove', e => {
+      mx = e.clientX; my = e.clientY;
+      cursor.style.left = mx + 'px';
+      cursor.style.top = my + 'px';
+    });
 
-<label>Description</label>
+    (function animateRing() {
+      rx += (mx - rx) * 0.12;
+      ry += (my - ry) * 0.12;
+      ring.style.left = rx + 'px';
+      ring.style.top = ry + 'px';
+      requestAnimationFrame(animateRing);
+    })();
 
-<textarea
-name="description"
-rows="3"
-placeholder="Describe what you will teach"
-required
-></textarea>
+    document.querySelectorAll('a, button, input, textarea, select').forEach(el => {
+      el.addEventListener('mouseenter', () => {
+        cursor.style.width = '20px'; cursor.style.height = '20px';
+        ring.style.width = '52px'; ring.style.height = '52px';
+        ring.style.borderColor = 'rgba(0,229,160,0.6)';
+      });
+      el.addEventListener('mouseleave', () => {
+        cursor.style.width = '10px'; cursor.style.height = '10px';
+        ring.style.width = '36px'; ring.style.height = '36px';
+        ring.style.borderColor = 'rgba(0,229,160,0.4)';
+      });
+    });
 
-</div>
-
-
-<div class="field">
-
-<label>Level</label>
-
-<select name="level" required>
-
-<option value="">Select Level</option>
-<option value="Beginner">Beginner</option>
-<option value="Intermediate">Intermediate</option>
-<option value="Advanced">Advanced</option>
-
-</select>
-
-</div>
-
-
-<div class="buttons">
-
-<button class="btn btn-primary">
-Start Teaching
-</button>
-
-<a href="/listings" class="btn btn-secondary">
-Back
-</a>
-
-</div>
-
-</form>
-
-</div>
-
-</div>
+    // Hamburger
+    const hamburger = document.getElementById('hamburger');
+    const mobileMenu = document.getElementById('mobileMenu');
+    hamburger.addEventListener('click', () => {
+      hamburger.classList.toggle('open');
+      mobileMenu.classList.toggle('open');
+    });
+    mobileMenu.querySelectorAll('a').forEach(a => {
+      a.addEventListener('click', () => {
+        hamburger.classList.remove('open');
+        mobileMenu.classList.remove('open');
+      });
+    });
+  </script>
 
 </body>
-
 </html>
