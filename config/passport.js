@@ -11,24 +11,24 @@ module.exports = function(){
 
     // Google login
     passport.use(new GoogleStrategy({
-        clientID:process.env.GOOGLE_CLIENT_ID,
-        clientSecret:process.env.GOOGLE_CLIENT_SECRET,
-        callbackURL:"/auth/google/callback"
+        clientID: process.env.GOOGLE_CLIENT_ID,
+        clientSecret: process.env.GOOGLE_CLIENT_SECRET,
+        callbackURL: "http://localhost:8080/auth/google/callback"
     },
     async (accessToken, refreshToken, profile, done)=>{
 
-        let user = await User.findOne({googleId:profile.id});
+        let user = await User.findOne({ googleId: profile.id });
 
         if(!user){
             user = new User({
-                username:profile.displayName,
-                googleId:profile.id
+                username: profile.displayName,
+                googleId: profile.id
             });
 
             await user.save();
         }
 
-        return done(null,user);
+        return done(null, user);
     }
     ));
 
