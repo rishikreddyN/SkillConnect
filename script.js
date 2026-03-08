@@ -153,19 +153,23 @@ app.post("/listings", isLoggedIn, async (req,res)=>{
 
 });
 
-
-app.get("/listings/:id", isLoggedIn, async (req,res)=>{
+app.get("/listings/:id", isLoggedIn, async (req, res) => {
 
     const { id } = req.params;
 
     const listing = await Listing.findById(id)
     .populate("owner")
     .populate({
-        path:"reviews",
-        populate:{ path:"author" }
+        path: "reviews",
+        populate: { path: "author" }
     });
 
-    res.render("listings/show",{ listing });
+    const existingRequest = await Request.findOne({
+        student: req.user._id,
+        listing: id
+    });
+
+    res.render("listings/show", { listing, existingRequest }); // ✅ added
 
 });
 
@@ -201,63 +205,106 @@ app.delete("/listings/:id", isLoggedIn, isOwner, async (req,res)=>{
     res.redirect("/listings");
 
 });
-
-
-// ------------------ Connect Request + Notification ------------------
-
-app.post("/listings/:id/connect", isLoggedIn, async (req,res)=>{
+//connections send
+app.post("/listings/:id/connect", isLoggedIn, async (req, res) => {
 
     const { id } = req.params;
 
     const listing = await Listing.findById(id).populate("owner");
 
+    const existingRequest = await Request.findOne({
+        student: req.user._id,
+        listing: id
+    });
+
+    if (existingRequest) {
+        req.flash("error", "Request already sent!");
+        return res.redirect(`/listings/${id}`);
+    }
+
     const newRequest = new Request({
-        student:req.user._id,
-        tutor:listing.owner._id,
-        listing:id
+        student: req.user._id,
+        tutor: listing.owner._id,
+        listing: id
     });
 
     await newRequest.save();
 
     const notification = new Notification({
         user: listing.owner._id,
-        message:`${req.user.username} wants to connect with you`,
-        link:`/listings/${id}`
+        sender: req.user._id,
+        listing: id,
+        message: `${req.user.username} wants to connect with you`,
+        link: `/listings/${id}`
     });
 
     await notification.save();
 
-    req.flash("success","Connection request sent!");
+    req.flash("success", "Connection request sent!");
 
     res.redirect(`/listings/${id}`);
-
 });
-
 
 // ------------------ Notifications ------------------
 
-app.get("/notifications", isLoggedIn, async (req,res)=>{
+app.get("/notifications", isLoggedIn, async (req, res) => {
 
     const notifications = await Notification.find({
-        user:req.user._id
-    }).sort({createdAt:-1});
+        user: req.user._id
+    })
+    .populate("sender")
+    .sort({ createdAt: -1 });
 
-    res.render("notifications/index",{ notifications });
+    res.render("notifications", { notifications }); // ✅ fixed
 
 });
 
-
-app.post("/notifications/:id/read", isLoggedIn, async (req,res)=>{
+app.post("/notifications/:id/read", isLoggedIn, async (req, res) => {
 
     const { id } = req.params;
 
-    await Notification.findByIdAndUpdate(id,{ isRead:true });
+    await Notification.findByIdAndUpdate(id, { isRead: true });
 
     res.redirect("/notifications");
 
 });
 
 
+// accept
+app.post("/notifications/:id/accept", isLoggedIn, async (req, res) => {
+    const { id } = req.params;
+
+    const notification = await Notification.findById(id);
+    
+    notification.status = "accepted";
+    await notification.save();
+
+    const updatedRequest = await Request.findOneAndUpdate(
+        { listing: notification.listing, student: notification.sender },
+        { status: "accepted" },
+        { new: true } // ← returns updated document
+    );
+
+    console.log("Updated Request:", updatedRequest); // ← is this null or the request?
+
+    res.redirect("/notifications");
+});
+// decline
+app.post("/notifications/:id/decline", isLoggedIn, async (req, res) => {
+    const { id } = req.params;
+
+    const notification = await Notification.findById(id);
+    notification.status = "declined";
+    await notification.save();
+
+    // ✅ also update the Request status
+    await Request.findOneAndUpdate(
+        { listing: notification.listing, student: notification.sender },
+        { status: "declined" }
+    );
+
+    res.redirect("/notifications");
+});
 // ------------------ Reviews ------------------
 
 app.post("/listings/:id/reviews", isLoggedIn, async (req,res)=>{

@@ -305,7 +305,7 @@
       flex-shrink: 0;
     }
 
-    .tutor-header-text {}
+   
     .tutor-eyebrow {
       font-family: 'DM Mono', monospace;
       font-size: 10px;
@@ -656,17 +656,26 @@
       <div class="divider"></div>
 
       <!-- Connect button — hidden for owner -->
-      <% if(currentUser && listing.owner && currentUser._id.toString() !== listing.owner._id.toString()) { %>
-        <form action="/listings/<%= listing._id %>/connect" method="POST">
-          <button class="btn btn-connect">
-            Connect with Tutor
-            <svg width="15" height="15" viewBox="0 0 16 16" fill="none">
-              <path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-            </svg>
-          </button>
-        </form>
-      <% } %>
-
+<% if(currentUser && listing.owner && currentUser._id.toString() !== listing.owner._id.toString()) { %>
+  <% if(existingRequest) { %>
+    <% if(existingRequest.status === "accepted") { %>
+      <p class="btn btn-connect" style="background:rgba(0,229,160,0.1); color:var(--accent); text-align:center;">✅ Request Accepted</p>
+    <% } else if(existingRequest.status === "declined") { %>
+      <p class="btn btn-connect" style="background:rgba(255,80,80,0.1); color:#ff9090; text-align:center;">❌ Request Declined</p>
+    <% } else { %>
+      <p class="btn btn-connect" style="background:rgba(255,255,255,0.05); color:var(--muted); text-align:center;">⏳ Request Pending...</p>
+    <% } %>
+  <% } else { %>
+    <form action="/listings/<%= listing._id %>/connect" method="POST">
+      <button class="btn btn-connect">
+        Connect with Tutor
+        <svg width="15" height="15" viewBox="0 0 16 16" fill="none">
+          <path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </button>
+    </form>
+  <% } %>
+<% } %>
       <!-- Owner controls -->
       <div class="action-buttons">
         <% if(currentUser && listing.owner && currentUser._id.toString() === listing.owner._id.toString()) { %>

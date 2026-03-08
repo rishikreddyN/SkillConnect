@@ -17,11 +17,11 @@ const requestSchema = new mongoose.Schema({
         type: mongoose.Schema.Types.ObjectId,
         ref:"Listing"
     },
-
-    status:{
-        type:String,
-        default:"pending"
-    }
+    status: {
+    type: String,
+    enum: ["pending", "accepted", "declined"],
+    default: "pending"
+}
 
 });
 

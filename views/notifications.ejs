@@ -3,12 +3,11 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Listings - SkillConnect</title>
+  <title>Notifications - SkillConnect</title>
   <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;700;800&family=DM+Mono:wght@400;500&family=DM+Sans:ital,wght@0,300;0,400;1,300&display=swap" rel="stylesheet"/>
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
-    /* Force custom cursor everywhere — prevents browser arrow on links/buttons */
     html, body, a, button, input, [role="button"] { cursor: none !important; }
 
     :root {
@@ -31,14 +30,12 @@
       font-weight: 300;
       min-height: 100vh;
       overflow-x: hidden;
-      cursor: none;
     }
 
     ::-webkit-scrollbar { width: 4px; }
     ::-webkit-scrollbar-track { background: var(--bg); }
     ::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.1); border-radius: 2px; }
 
-    /* Background grid */
     body::before {
       content: '';
       position: fixed;
@@ -51,7 +48,6 @@
       z-index: 0;
     }
 
-    /* Blobs */
     .blob {
       position: fixed;
       border-radius: 50%;
@@ -142,17 +138,12 @@
       50%       { box-shadow: 0 0 0 6px rgba(0,229,160,0); }
     }
 
-    .nav-right {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-    }
+    .nav-right { display: flex; align-items: center; gap: 8px; }
 
     .nav-link {
       color: var(--muted);
       text-decoration: none;
       font-size: 14px;
-      font-weight: 400;
       padding: 8px 16px;
       border-radius: 4px;
       letter-spacing: 0.02em;
@@ -166,7 +157,6 @@
       color: var(--accent);
       border: 1px solid rgba(0,229,160,0.3);
       background: rgba(0,229,160,0.06);
-      letter-spacing: 0.03em;
     }
     .nav-link.teach:hover {
       background: var(--accent);
@@ -185,14 +175,12 @@
       border-color: rgba(255,112,112,0.35);
     }
 
-    /* Hamburger */
     .hamburger {
       display: none;
       flex-direction: column;
       gap: 5px;
       background: none;
       border: none;
-      cursor: none;
       padding: 4px;
     }
     .hamburger span {
@@ -206,7 +194,6 @@
     .hamburger.open span:nth-child(2) { opacity: 0; }
     .hamburger.open span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
 
-    /* Mobile menu */
     .mobile-menu {
       display: none;
       position: fixed;
@@ -237,18 +224,14 @@
     .page-wrapper {
       position: relative;
       z-index: 1;
-      max-width: 1200px;
+      max-width: 680px;
       margin: 0 auto;
-      padding: 48px 48px;
-      padding-top: 108px;
+      padding: 108px 24px 60px;
     }
 
+    /* ===== PAGE HEADER ===== */
     .page-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: flex-end;
-      margin-bottom: 48px;
-      gap: 16px;
+      margin-bottom: 36px;
     }
 
     .eyebrow {
@@ -276,56 +259,94 @@
       line-height: 1.05;
     }
 
-    /* ===== GRID ===== */
-    .listings-grid {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 20px;
+    /* ===== EMPTY STATE ===== */
+    .empty-state {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 60px 32px;
+      text-align: center;
+      animation: fadeUp 0.6s ease both;
     }
 
-    /* ===== CARD ===== */
-    .tutor-card {
+    .empty-icon {
+      font-size: 36px;
+      margin-bottom: 16px;
+      opacity: 0.4;
+    }
+
+    .empty-title {
+      font-family: 'Syne', sans-serif;
+      font-weight: 700;
+      font-size: 18px;
+      color: var(--text);
+      margin-bottom: 8px;
+    }
+
+    .empty-sub {
+      font-family: 'DM Mono', monospace;
+      font-size: 12px;
+      letter-spacing: 0.06em;
+      color: var(--muted);
+    }
+
+    /* ===== NOTIFICATION LIST ===== */
+    .notif-list {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    /* ===== NOTIFICATION CARD ===== */
+    .notif-card {
       background: var(--card);
       border: 1px solid var(--border);
       border-radius: 10px;
-      padding: 28px;
+      padding: 22px 24px;
       display: flex;
-      flex-direction: column;
-      gap: 18px;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
       position: relative;
       overflow: hidden;
-      transition: border-color 0.3s, transform 0.3s, box-shadow 0.3s;
       animation: fadeUp 0.5s ease both;
+      transition: border-color 0.3s, box-shadow 0.3s;
     }
-    .tutor-card::before {
+    .notif-card::before {
       content: '';
       position: absolute;
       inset: 0;
-      background: linear-gradient(135deg, rgba(0,229,160,0.04), transparent);
+      background: linear-gradient(135deg, rgba(0,229,160,0.03), transparent);
       opacity: 0;
       transition: opacity 0.3s;
       pointer-events: none;
     }
-    .tutor-card:hover {
-      border-color: rgba(0,229,160,0.25);
-      transform: translateY(-4px);
-      box-shadow: 0 20px 60px rgba(0,0,0,0.4);
+    .notif-card:hover {
+      border-color: rgba(0,229,160,0.18);
+      box-shadow: 0 8px 32px rgba(0,0,0,0.3);
     }
-    .tutor-card:hover::before { opacity: 1; }
+    .notif-card:hover::before { opacity: 1; }
+
+    /* Pending gets a subtle left accent */
+    .notif-card.pending {
+      border-left: 2px solid var(--accent);
+    }
 
     @keyframes fadeUp {
-      from { opacity: 0; transform: translateY(16px); }
+      from { opacity: 0; transform: translateY(14px); }
       to   { opacity: 1; transform: translateY(0); }
     }
 
-    .card-top {
+    /* Left side */
+    .notif-left {
       display: flex;
       align-items: center;
       gap: 14px;
+      min-width: 0;
     }
 
-    .card-avatar {
-      width: 46px; height: 46px;
+    .notif-avatar {
+      width: 44px; height: 44px;
       border-radius: 50%;
       background: linear-gradient(135deg, var(--accent2), var(--accent));
       display: flex;
@@ -333,97 +354,104 @@
       justify-content: center;
       font-family: 'Syne', sans-serif;
       font-weight: 800;
-      font-size: 17px;
+      font-size: 16px;
       color: #fff;
       flex-shrink: 0;
     }
 
-    .card-name {
+    
+
+    .notif-sender {
       font-family: 'Syne', sans-serif;
       font-weight: 700;
-      font-size: 17px;
-      letter-spacing: -0.01em;
+      font-size: 15px;
+      margin-bottom: 3px;
       white-space: nowrap;
       overflow: hidden;
       text-overflow: ellipsis;
     }
 
-    .card-meta {
-      display: flex;
-      flex-direction: column;
-      gap: 10px;
+    .notif-message {
+      font-size: 13px;
+      color: var(--muted);
+      font-weight: 300;
     }
 
-    .meta-row {
+    /* Right side */
+    .notif-right {
       display: flex;
       align-items: center;
-      gap: 10px;
-      font-size: 14px;
-    }
-
-    .meta-label {
-      font-family: 'DM Mono', monospace;
-      font-size: 10px;
-      letter-spacing: 0.12em;
-      text-transform: uppercase;
-      color: var(--muted);
-      width: 40px;
+      gap: 8px;
       flex-shrink: 0;
+      position: relative;
+      z-index: 2;
     }
 
-    .meta-value { color: var(--text); font-weight: 300; }
-
-    .level-badge {
-      display: inline-block;
-      padding: 3px 10px;
+    /* Status badge */
+    .status-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 5px 12px;
       border-radius: 3px;
       font-family: 'DM Mono', monospace;
       font-size: 11px;
       font-weight: 500;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+    }
+    .status-badge.accepted {
       background: rgba(0,229,160,0.08);
       color: var(--accent);
       border: 1px solid rgba(0,229,160,0.2);
     }
+    .status-badge.declined {
+      background: rgba(255,80,80,0.08);
+      color: #ff9090;
+      border: 1px solid rgba(255,80,80,0.2);
+    }
+    .status-dot {
+      width: 6px; height: 6px;
+      border-radius: 50%;
+      flex-shrink: 0;
+    }
+    .accepted .status-dot { background: var(--accent); }
+    .declined .status-dot { background: #ff7070; }
 
-    .card-divider { height: 1px; background: var(--border); }
-
-    .btn-view {
+    /* Action buttons */
+    .btn {
+      padding: 9px 16px;
+      border: none;
+      border-radius: 5px;
+      font-family: 'Syne', sans-serif;
+      font-size: 13px;
+      font-weight: 700;
+      letter-spacing: 0.02em;
       display: inline-flex;
       align-items: center;
-      gap: 8px;
-      padding: 10px 18px;
-      background: transparent;
-      border: 1px solid var(--border);
-      border-radius: 5px;
-      color: var(--muted);
-      font-family: 'DM Mono', monospace;
-      font-size: 12px;
-      letter-spacing: 0.05em;
-      text-decoration: none;
-      transition: color 0.2s, border-color 0.2s, background 0.2s, gap 0.2s;
-      align-self: flex-start;
-      position: relative;
-      z-index: 2;
+      justify-content: center;
+      gap: 5px;
+      transition: transform 0.2s, box-shadow 0.2s, background 0.2s;
+      -webkit-tap-highlight-color: transparent;
     }
-    .btn-view:hover {
-      color: var(--accent);
-      border-color: rgba(0,229,160,0.3);
-      background: rgba(0,229,160,0.05);
-      gap: 12px;
+    .btn:active { transform: scale(0.96); }
+
+    .btn-accept {
+      background: var(--accent);
+      color: #000;
+    }
+    .btn-accept:hover {
+      box-shadow: 0 0 20px rgba(0,229,160,0.35);
+      transform: translateY(-1px);
     }
 
-    /* Empty state */
-    .empty-state {
-      grid-column: 1 / -1;
-      text-align: center;
-      padding: 80px 20px;
+    .btn-decline {
+      background: rgba(255,80,80,0.1);
+      color: #ff9090;
+      border: 1px solid rgba(255,80,80,0.2);
     }
-    .empty-state p {
-      font-family: 'DM Mono', monospace;
-      font-size: 13px;
-      letter-spacing: 0.08em;
-      color: var(--muted);
-      margin-bottom: 20px;
+    .btn-decline:hover {
+      background: rgba(255,80,80,0.18);
     }
 
     /* ============================================================
@@ -434,37 +462,37 @@
       nav { padding: 18px 28px; }
       .nav-links-desktop { display: none; }
       .hamburger { display: flex; }
-      .page-wrapper { padding: 28px 28px; padding-top: 96px; }
-      .listings-grid { grid-template-columns: repeat(2, 1fr); }
+      .page-wrapper { padding: 96px 20px 60px; }
       .page-title { font-size: 32px; }
     }
 
     @media (max-width: 640px) {
-      body { cursor: auto; }
-      html, body, a, button, input, [role="button"] { cursor: auto !important; }
+      html, body, a, button, [role="button"] { cursor: auto !important; }
       .cursor, .cursor-ring { display: none; }
 
       nav { padding: 16px 20px; }
       .logo { font-size: 18px; }
       .mobile-menu { top: 57px; }
 
-      .page-wrapper { padding: 20px 16px; padding-top: 84px; }
-
-      .page-header {
-        flex-direction: column;
-        align-items: flex-start;
-        margin-bottom: 28px;
-      }
+      .page-wrapper { padding: 80px 16px 48px; }
       .page-title { font-size: 28px; }
 
-      .listings-grid {
-        grid-template-columns: 1fr;
-        gap: 12px;
+      /* Stack cards vertically on mobile */
+      .notif-card {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 16px;
+        padding: 18px 18px;
       }
 
-      .tutor-card { padding: 20px; gap: 14px; }
-      .card-avatar { width: 40px; height: 40px; font-size: 15px; }
-      .card-name { font-size: 15px; }
+      .notif-right {
+        width: 100%;
+        justify-content: flex-start;
+      }
+
+      .btn { flex: 1; padding: 11px 12px; font-size: 13px; }
+
+      .empty-state { padding: 48px 20px; }
     }
   </style>
 </head>
@@ -485,9 +513,6 @@
     <div class="nav-right nav-links-desktop">
       <a href="/listings" class="nav-link">Listings</a>
       <a href="/listings/new" class="nav-link teach">Teach a Skill</a>
-      <a href="/notifications" class="nav-link">
-  🔔 Notifications
-</a>
       <a href="/logout" class="nav-link logout">Logout</a>
     </div>
     <button class="hamburger" id="hamburger" aria-label="Toggle menu">
@@ -497,66 +522,72 @@
 
   <!-- Mobile Menu -->
   <div class="mobile-menu" id="mobileMenu">
-    
+    <a href="/listings">Listings</a>
     <a href="/listings/new" class="teach">Teach a Skill</a>
     <a href="/logout" class="logout">Logout</a>
   </div>
 
-  <!-- Page -->
   <div class="page-wrapper">
 
     <div class="page-header">
-      <div>
-        <div class="eyebrow">Discover</div>
-        <div class="page-title">Available Tutors</div>
+      <div class="eyebrow">Inbox</div>
+      <div class="page-title">Notifications</div>
+    </div>
+
+    <% if(notifications.length === 0) { %>
+
+      <div class="empty-state">
+        <div class="empty-icon">🔔</div>
+        <div class="empty-title">All caught up</div>
+        <div class="empty-sub">No notifications yet.</div>
       </div>
-     
-    </div>
 
-    <div class="listings-grid">
+    <% } else { %>
 
-      <% allListings.forEach((listing, i) => { %>
+      <div class="notif-list">
+        <% notifications.forEach((n, i) => { %>
 
-        <div class="tutor-card">
+          <div class="notif-card <%= n.status === 'pending' ? 'pending' : '' %>">
 
-          <div class="card-top">
-            <div class="card-avatar">
-              <%= listing.name ? listing.name.charAt(0).toUpperCase() : "?" %>
+            <div class="notif-left">
+              <div class="notif-avatar">
+                <%= n.sender ? n.sender.username.charAt(0).toUpperCase() : "?" %>
+              </div>
+              <div class="notif-text">
+                <div class="notif-sender">
+                  <%= n.sender ? n.sender.username : "Unknown" %>
+                </div>
+                <div class="notif-message">wants to connect with you</div>
+              </div>
             </div>
-            <div class="card-name">
-              <%= listing.name ? listing.name.charAt(0).toUpperCase() + listing.name.slice(1) : "Unknown" %>
+
+            <div class="notif-right">
+              <% if(n.status === "pending") { %>
+
+                <form action="/notifications/<%= n._id %>/accept" method="POST">
+                  <button class="btn btn-accept">✓ Accept</button>
+                </form>
+                <form action="/notifications/<%= n._id %>/decline" method="POST">
+                  <button class="btn btn-decline">✕ Decline</button>
+                </form>
+
+              <% } else { %>
+
+                <span class="status-badge <%= n.status %>">
+                  <span class="status-dot"></span>
+                  <%= n.status %>
+                </span>
+
+              <% } %>
             </div>
+
           </div>
 
-          <div class="card-meta">
-            <div class="meta-row">
-              <span class="meta-label">Skill</span>
-              <span class="meta-value"><%= listing.skill %></span>
-            </div>
-            <div class="meta-row">
-              <span class="meta-label">Level</span>
-              <span class="level-badge"><%= listing.level %></span>
-            </div>
-          </div>
+        <% }) %>
+      </div>
 
-          <div class="card-divider"></div>
+    <% } %>
 
-          <a href="/listings/<%= listing._id %>" class="btn-view">
-            View Details →
-          </a>
-
-        </div>
-
-      <% }) %>
-
-      <% if (!allListings.length) { %>
-        <div class="empty-state">
-          <p>No tutors listed yet.</p>
-          <a href="/listings/new" class="nav-link teach">Be the first →</a>
-        </div>
-      <% } %>
-
-    </div>
   </div>
 
   <script>

@@ -1,161 +1,176 @@
 <!DOCTYPE html>
 <html>
+
 <head>
-    <title>Navbar - SkillConnect</title>
-    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;600&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
-    <style>
-        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  <title>Navbar - SkillConnect</title>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;600&family=DM+Sans:wght@300;400;500&display=swap"
+    rel="stylesheet">
+  <style>
+    *,
+    *::before,
+    *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
 
-        :root {
-            --bg: #1a1625;
-            --surface: #221d2e;
-            --border: rgba(255,255,255,0.08);
-            --accent: #c8a96e;
-            --text: #f0ece4;
-            --muted: #8a8499;
-        }
+    :root {
+      --bg: #1a1625;
+      --surface: #221d2e;
+      --border: rgba(255, 255, 255, 0.08);
+      --accent: #c8a96e;
+      --text: #f0ece4;
+      --muted: #8a8499;
+    }
 
-        body {
-            font-family: 'DM Sans', sans-serif;
-            background: var(--bg);
-        }
+    body {
+      font-family: 'DM Sans', sans-serif;
+      background: var(--bg);
+    }
 
-        .navbar {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            padding: 22px 48px;
-            border-bottom: 1px solid var(--border);
-            background: var(--surface);
-            position: relative;
-            z-index: 100;
-        }
+    .navbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 22px 48px;
+      border-bottom: 1px solid var(--border);
+      background: var(--surface);
+      position: relative;
+      z-index: 100;
+    }
 
-        .navbar-brand {
-            font-family: 'Playfair Display', serif;
-            font-size: 1.4rem;
-            font-weight: 600;
-            color: var(--text);
-            text-decoration: none;
-            letter-spacing: 0.02em;
-        }
+    .navbar-brand {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.4rem;
+      font-weight: 600;
+      color: var(--text);
+      text-decoration: none;
+      letter-spacing: 0.02em;
+    }
 
-        .navbar-brand span {
-            color: var(--accent);
-        }
+    .navbar-brand span {
+      color: var(--accent);
+    }
 
-        .navbar-links {
-            display: flex;
-            align-items: center;
-            gap: 18px;
-        }
+    .navbar-links {
+      display: flex;
+      align-items: center;
+      gap: 18px;
+    }
 
-        .nav-link {
-            color: var(--muted);
-            text-decoration: none;
-            font-size: 0.875rem;
-            font-weight: 400;
-            padding: 8px 16px;
-            border-radius: 6px;
-            letter-spacing: 0.02em;
-            transition: color 0.2s, background 0.2s;
-        }
+    .nav-link {
+      color: var(--muted);
+      text-decoration: none;
+      font-size: 0.875rem;
+      font-weight: 400;
+      padding: 8px 16px;
+      border-radius: 6px;
+      letter-spacing: 0.02em;
+      transition: color 0.2s, background 0.2s;
+    }
 
-        .nav-link:hover {
-            color: var(--text);
-            background: rgba(255,255,255,0.04);
-        }
+    .nav-link:hover {
+      color: var(--text);
+      background: rgba(255, 255, 255, 0.04);
+    }
 
-        .nav-link.teach {
-            color: var(--accent);
-            border: 1px solid rgba(200,169,110,0.25);
-            background: rgba(200,169,110,0.06);
-        }
+    .nav-link.teach {
+      color: var(--accent);
+      border: 1px solid rgba(200, 169, 110, 0.25);
+      background: rgba(200, 169, 110, 0.06);
+    }
 
-        .nav-link.teach:hover {
-            background: rgba(200,169,110,0.12);
-            border-color: rgba(200,169,110,0.4);
-        }
+    .nav-link.teach:hover {
+      background: rgba(200, 169, 110, 0.12);
+      border-color: rgba(200, 169, 110, 0.4);
+    }
 
-        .nav-link.logout {
-            color: #e07070;
-        }
+    .nav-link.logout {
+      color: #e07070;
+    }
 
-        .nav-link.logout:hover {
-            color: #ff9090;
-            background: rgba(255,80,80,0.06);
-        }
+    .nav-link.logout:hover {
+      color: #ff9090;
+      background: rgba(255, 80, 80, 0.06);
+    }
 
-        /* Mobile toggler */
-        .navbar-toggler {
-            display: none;
-            flex-direction: column;
-            gap: 5px;
-            background: none;
-            border: none;
-            cursor: pointer;
-            padding: 4px;
-        }
+    /* Mobile toggler */
+    .navbar-toggler {
+      display: none;
+      flex-direction: column;
+      gap: 5px;
+      background: none;
+      border: none;
+      cursor: pointer;
+      padding: 4px;
+    }
 
-        .navbar-toggler span {
-            display: block;
-            width: 22px;
-            height: 2px;
-            background: var(--muted);
-            border-radius: 2px;
-            transition: all 0.3s;
-        }
+    .navbar-toggler span {
+      display: block;
+      width: 22px;
+      height: 2px;
+      background: var(--muted);
+      border-radius: 2px;
+      transition: all 0.3s;
+    }
 
-        @media (max-width: 768px) {
-            .navbar {
-                padding: 18px 24px;
-                flex-wrap: wrap;
-                gap: 0;
-            }
+    @media (max-width: 768px) {
+      .navbar {
+        padding: 18px 24px;
+        flex-wrap: wrap;
+        gap: 0;
+      }
 
-            .navbar-toggler {
-                display: flex;
-            }
+      .navbar-toggler {
+        display: flex;
+      }
 
-            .navbar-links {
-                display: none;
-                width: 100%;
-                flex-direction: column;
-                align-items: flex-start;
-                padding: 16px 0 8px;
-                gap: 2px;
-            }
+      .navbar-links {
+        display: none;
+        width: 100%;
+        flex-direction: column;
+        align-items: flex-start;
+        padding: 16px 0 8px;
+        gap: 2px;
+      }
 
-            .navbar-links.open {
-                display: flex;
-            }
+      .navbar-links.open {
+        display: flex;
+      }
 
-            .nav-link {
-                width: 100%;
-                padding: 10px 12px;
-            }
-        }
-    </style>
+      .nav-link {
+        width: 100%;
+        padding: 10px 12px;
+      }
+    }
+  </style>
 </head>
+
 <body>
 
-<nav class="navbar">
+  <nav class="navbar">
 
     <a class="navbar-brand" href="/listings">Skill<span>Connect</span></a>
 
-    <button class="navbar-toggler" onclick="this.classList.toggle('active'); document.getElementById('navLinks').classList.toggle('open')">
-        <span></span>
-        <span></span>
-        <span></span>
+    <button class="navbar-toggler"
+      onclick="this.classList.toggle('active'); document.getElementById('navLinks').classList.toggle('open')">
+      <span></span>
+      <span></span>
+      <span></span>
     </button>
 
     <div class="navbar-links" id="navLinks">
-        
-        <a class="nav-link teach" href="/listings/new">Teach a Skill</a>
-        <a class="nav-link logout" href="/logout">Logout</a>
+
+      <a class="nav-link teach" href="/listings/new">Teach a Skill</a>
+      <a href="/notifications" class="nav-link">
+        🔔 Notifications
+      </a>
+      <a class="nav-link logout" href="/logout">Logout</a>
     </div>
 
-</nav>
+  </nav>
 
 </body>
+
 </html>
