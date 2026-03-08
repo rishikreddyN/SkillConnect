@@ -230,9 +230,7 @@
     }
 
     /* ===== PAGE HEADER ===== */
-    .page-header {
-      margin-bottom: 36px;
-    }
+    .page-header { margin-bottom: 36px; }
 
     .eyebrow {
       font-family: 'DM Mono', monospace;
@@ -268,34 +266,12 @@
       text-align: center;
       animation: fadeUp 0.6s ease both;
     }
-
-    .empty-icon {
-      font-size: 36px;
-      margin-bottom: 16px;
-      opacity: 0.4;
-    }
-
-    .empty-title {
-      font-family: 'Syne', sans-serif;
-      font-weight: 700;
-      font-size: 18px;
-      color: var(--text);
-      margin-bottom: 8px;
-    }
-
-    .empty-sub {
-      font-family: 'DM Mono', monospace;
-      font-size: 12px;
-      letter-spacing: 0.06em;
-      color: var(--muted);
-    }
+    .empty-icon { font-size: 36px; margin-bottom: 16px; opacity: 0.4; }
+    .empty-title { font-family: 'Syne', sans-serif; font-weight: 700; font-size: 18px; color: var(--text); margin-bottom: 8px; }
+    .empty-sub { font-family: 'DM Mono', monospace; font-size: 12px; letter-spacing: 0.06em; color: var(--muted); }
 
     /* ===== NOTIFICATION LIST ===== */
-    .notif-list {
-      display: flex;
-      flex-direction: column;
-      gap: 12px;
-    }
+    .notif-list { display: flex; flex-direction: column; gap: 12px; }
 
     /* ===== NOTIFICATION CARD ===== */
     .notif-card {
@@ -321,142 +297,73 @@
       transition: opacity 0.3s;
       pointer-events: none;
     }
-    .notif-card:hover {
-      border-color: rgba(0,229,160,0.18);
-      box-shadow: 0 8px 32px rgba(0,0,0,0.3);
-    }
+    .notif-card:hover { border-color: rgba(0,229,160,0.18); box-shadow: 0 8px 32px rgba(0,0,0,0.3); }
     .notif-card:hover::before { opacity: 1; }
-
-    /* Pending gets a subtle left accent */
-    .notif-card.pending {
-      border-left: 2px solid var(--accent);
-    }
+    .notif-card.pending { border-left: 2px solid var(--accent); }
 
     @keyframes fadeUp {
       from { opacity: 0; transform: translateY(14px); }
       to   { opacity: 1; transform: translateY(0); }
     }
 
-    /* Left side */
-    .notif-left {
-      display: flex;
-      align-items: center;
-      gap: 14px;
-      min-width: 0;
-    }
+    .notif-left { display: flex; align-items: center; gap: 14px; min-width: 0; }
 
     .notif-avatar {
       width: 44px; height: 44px;
       border-radius: 50%;
       background: linear-gradient(135deg, var(--accent2), var(--accent));
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-family: 'Syne', sans-serif;
-      font-weight: 800;
-      font-size: 16px;
-      color: #fff;
-      flex-shrink: 0;
+      display: flex; align-items: center; justify-content: center;
+      font-family: 'Syne', sans-serif; font-weight: 800; font-size: 16px;
+      color: #fff; flex-shrink: 0;
     }
-
-    
 
     .notif-sender {
-      font-family: 'Syne', sans-serif;
-      font-weight: 700;
-      font-size: 15px;
-      margin-bottom: 3px;
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
+      font-family: 'Syne', sans-serif; font-weight: 700; font-size: 15px;
+      margin-bottom: 3px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
     }
+    .notif-message { font-size: 13px; color: var(--muted); font-weight: 300; }
 
-    .notif-message {
-      font-size: 13px;
-      color: var(--muted);
-      font-weight: 300;
-    }
-
-    /* Right side */
     .notif-right {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      flex-shrink: 0;
-      position: relative;
-      z-index: 2;
+      display: flex; align-items: center; gap: 8px;
+      flex-shrink: 0; position: relative; z-index: 2;
     }
 
     /* Status badge */
     .status-badge {
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-      padding: 5px 12px;
-      border-radius: 3px;
-      font-family: 'DM Mono', monospace;
-      font-size: 11px;
-      font-weight: 500;
-      letter-spacing: 0.05em;
-      text-transform: uppercase;
+      display: inline-flex; align-items: center; gap: 6px;
+      padding: 5px 12px; border-radius: 3px;
+      font-family: 'DM Mono', monospace; font-size: 11px;
+      font-weight: 500; letter-spacing: 0.05em; text-transform: uppercase;
     }
-    .status-badge.accepted {
-      background: rgba(0,229,160,0.08);
-      color: var(--accent);
-      border: 1px solid rgba(0,229,160,0.2);
-    }
-    .status-badge.declined {
-      background: rgba(255,80,80,0.08);
-      color: #ff9090;
-      border: 1px solid rgba(255,80,80,0.2);
-    }
-    .status-dot {
-      width: 6px; height: 6px;
-      border-radius: 50%;
-      flex-shrink: 0;
-    }
+    .status-badge.accepted { background: rgba(0,229,160,0.08); color: var(--accent); border: 1px solid rgba(0,229,160,0.2); }
+    .status-badge.declined { background: rgba(255,80,80,0.08); color: #ff9090; border: 1px solid rgba(255,80,80,0.2); }
+    .status-dot { width: 6px; height: 6px; border-radius: 50%; flex-shrink: 0; }
     .accepted .status-dot { background: var(--accent); }
     .declined .status-dot { background: #ff7070; }
 
     /* Action buttons */
     .btn {
-      padding: 9px 16px;
-      border: none;
-      border-radius: 5px;
-      font-family: 'Syne', sans-serif;
-      font-size: 13px;
-      font-weight: 700;
-      letter-spacing: 0.02em;
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      gap: 5px;
+      padding: 9px 16px; border: none; border-radius: 5px;
+      font-family: 'Syne', sans-serif; font-size: 13px; font-weight: 700;
+      letter-spacing: 0.02em; display: inline-flex; align-items: center;
+      justify-content: center; gap: 5px;
       transition: transform 0.2s, box-shadow 0.2s, background 0.2s;
-      -webkit-tap-highlight-color: transparent;
+      -webkit-tap-highlight-color: transparent; text-decoration: none;
     }
     .btn:active { transform: scale(0.96); }
 
-    .btn-accept {
-      background: var(--accent);
-      color: #000;
-    }
-    .btn-accept:hover {
-      box-shadow: 0 0 20px rgba(0,229,160,0.35);
-      transform: translateY(-1px);
-    }
+    .btn-accept { background: var(--accent); color: #000; }
+    .btn-accept:hover { box-shadow: 0 0 20px rgba(0,229,160,0.35); transform: translateY(-1px); }
 
-    .btn-decline {
-      background: rgba(255,80,80,0.1);
-      color: #ff9090;
-      border: 1px solid rgba(255,80,80,0.2);
-    }
-    .btn-decline:hover {
-      background: rgba(255,80,80,0.18);
-    }
+    .btn-decline { background: rgba(255,80,80,0.1); color: #ff9090; border: 1px solid rgba(255,80,80,0.2); }
+    .btn-decline:hover { background: rgba(255,80,80,0.18); }
 
-    /* ============================================================
-       RESPONSIVE
-    ============================================================ */
+    .btn-chat {
+      background: rgba(0,229,160,0.12);
+      color: var(--accent);
+      border: 1px solid rgba(0,229,160,0.25);
+    }
+    .btn-chat:hover { background: rgba(0,229,160,0.2); transform: translateY(-1px); }
 
     @media (max-width: 1024px) {
       nav { padding: 18px 28px; }
@@ -469,29 +376,14 @@
     @media (max-width: 640px) {
       html, body, a, button, [role="button"] { cursor: auto !important; }
       .cursor, .cursor-ring { display: none; }
-
       nav { padding: 16px 20px; }
       .logo { font-size: 18px; }
       .mobile-menu { top: 57px; }
-
       .page-wrapper { padding: 80px 16px 48px; }
       .page-title { font-size: 28px; }
-
-      /* Stack cards vertically on mobile */
-      .notif-card {
-        flex-direction: column;
-        align-items: flex-start;
-        gap: 16px;
-        padding: 18px 18px;
-      }
-
-      .notif-right {
-        width: 100%;
-        justify-content: flex-start;
-      }
-
+      .notif-card { flex-direction: column; align-items: flex-start; gap: 16px; padding: 18px; }
+      .notif-right { width: 100%; justify-content: flex-start; flex-wrap: wrap; }
       .btn { flex: 1; padding: 11px 12px; font-size: 13px; }
-
       .empty-state { padding: 48px 20px; }
     }
   </style>
@@ -513,6 +405,7 @@
     <div class="nav-right nav-links-desktop">
       <a href="/listings" class="nav-link">Listings</a>
       <a href="/listings/new" class="nav-link teach">Teach a Skill</a>
+      <a href="/chats" class="nav-link">💬 Chats</a>
       <a href="/logout" class="nav-link logout">Logout</a>
     </div>
     <button class="hamburger" id="hamburger" aria-label="Toggle menu">
@@ -524,6 +417,7 @@
   <div class="mobile-menu" id="mobileMenu">
     <a href="/listings">Listings</a>
     <a href="/listings/new" class="teach">Teach a Skill</a>
+    <a href="/chats">💬 Chats</a>
     <a href="/logout" class="logout">Logout</a>
   </div>
 
@@ -562,6 +456,7 @@
             </div>
 
             <div class="notif-right">
+
               <% if(n.status === "pending") { %>
 
                 <form action="/notifications/<%= n._id %>/accept" method="POST">
@@ -571,14 +466,23 @@
                   <button class="btn btn-decline">✕ Decline</button>
                 </form>
 
+              <% } else if(n.status === "accepted") { %>
+
+                <span class="status-badge accepted">
+                  <span class="status-dot"></span>
+                  accepted
+                </span>
+                <a href="/chats" class="btn btn-chat">💬 Chat</a>
+
               <% } else { %>
 
-                <span class="status-badge <%= n.status %>">
+                <span class="status-badge declined">
                   <span class="status-dot"></span>
-                  <%= n.status %>
+                  declined
                 </span>
 
               <% } %>
+
             </div>
 
           </div>
@@ -622,7 +526,6 @@
       });
     });
 
-    // Hamburger
     const hamburger = document.getElementById('hamburger');
     const mobileMenu = document.getElementById('mobileMenu');
     hamburger.addEventListener('click', () => {
