@@ -269,41 +269,52 @@ app.post("/notifications/:id/read", isLoggedIn, async (req, res) => {
 
 });
 
-
 // accept
 app.post("/notifications/:id/accept", isLoggedIn, async (req, res) => {
-    const { id } = req.params;
+    try {
+        const { id } = req.params;
 
-    const notification = await Notification.findById(id);
-    
-    notification.status = "accepted";
-    await notification.save();
+        const notification = await Notification.findById(id);
+        notification.status = "accepted";
+        await notification.save();
 
-    const updatedRequest = await Request.findOneAndUpdate(
-        { listing: notification.listing, student: notification.sender },
-        { status: "accepted" },
-        { new: true } // ← returns updated document
-    );
+        const updatedRequest = await Request.findOneAndUpdate(
+            { listing: notification.listing, student: notification.sender },
+            { status: "accepted" },
+            { new: true }
+        );
 
-    console.log("Updated Request:", updatedRequest); // ← is this null or the request?
+        console.log("Updated Request:", updatedRequest);
 
-    res.redirect("/notifications");
+        res.redirect("/notifications");
+    } catch(err) {
+        console.error("Accept error:", err); // ← shows real error
+        res.redirect("/notifications");
+    }
 });
+
 // decline
 app.post("/notifications/:id/decline", isLoggedIn, async (req, res) => {
-    const { id } = req.params;
+    try {
+        const { id } = req.params;
 
-    const notification = await Notification.findById(id);
-    notification.status = "declined";
-    await notification.save();
+        const notification = await Notification.findById(id);
+        notification.status = "declined";
+        await notification.save();
 
-    // ✅ also update the Request status
-    await Request.findOneAndUpdate(
-        { listing: notification.listing, student: notification.sender },
-        { status: "declined" }
-    );
+        const updatedRequest = await Request.findOneAndUpdate(
+            { listing: notification.listing, student: notification.sender },
+            { status: "declined" },
+            { new: true }
+        );
 
-    res.redirect("/notifications");
+        console.log("Updated Request:", updatedRequest);
+
+        res.redirect("/notifications");
+    } catch(err) {
+        console.error("Decline error:", err); // ← shows real error
+        res.redirect("/notifications");
+    }
 });
 // ------------------ Reviews ------------------
 
